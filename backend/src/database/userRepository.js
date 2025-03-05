@@ -38,12 +38,26 @@ connectionMysql();
 
 function all(table){
     return new Promise( (resolve, reject) =>{
-        connection.query()
+        connection.query(`SELECT * FROM ${table}`, (err, results) => {
+            if (err) {
+            return reject(err);
+            }
+            resolve(results);
+            console.log(results);
+        });
     });
 }
 
 function one(table, id){
-
+    return new Promise( (resolve, reject) =>{
+        connection.query(`SELECT * FROM ${table} WHERE id=${id}`, (err, results) => {
+            if (err) {
+            return reject(err);
+            }
+            resolve(results);
+            console.log(results);
+        });
+    });
 }
 
 function add(table, data){
