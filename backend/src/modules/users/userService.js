@@ -1,17 +1,31 @@
-const db = require('../../database/userRepository')
+const userRepository = require('../../database/userRepository')
 
 const TABLE = 'users';
 
 function all(){
-    return db.all(TABLE);
+    return userRepository.all(TABLE);
 }
 
 function one(id){
-    return db.one(TABLE, id);
+    return userRepository.one(TABLE, id);
 }
 
+function createUser(body){
+    return userRepository.createUser(TABLE, body);
+}
+
+function updateUser(body){
+    return userRepository.updateUser(TABLE, body);
+}
+
+function deleteUser(id){
+    return userRepository.deleteUser(TABLE, id);
+}
 
 module.exports = {
     all,
-    one
+    one,
+    createUser,
+    updateUser,
+    deleteUser
 }

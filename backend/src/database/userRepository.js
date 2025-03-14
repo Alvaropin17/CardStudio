@@ -43,34 +43,78 @@ function all(table){
             return reject(err);
             }
             resolve(results);
-            console.log(results);
         });
     });
 }
 
-function one(table, id){
-    return new Promise( (resolve, reject) =>{
+function one(table, id) {
+    return new Promise((resolve, reject) => {
         connection.query(`SELECT * FROM ${table} WHERE id=${id}`, (err, results) => {
             if (err) {
-            return reject(err);
+                return reject(err);
             }
-            resolve(results);
-            console.log(results);
+
+            if (results.length === 0) {
+                return resolve(null); // 🔹 Devuelve null si no se encontró el usuario
+            }
+
+            resolve(results[0]); // 🔹 Devuelve solo el primer usuario encontrado
         });
     });
 }
 
-function add(table, data){
+function createUser(table, body) {
+    return new Promise((resolve, reject) => {
+        // Eliminar el ID si existe y la base de datos lo genera automáticamente
+        if ("id" in body) {
+            delete body.id;
+        }
 
+        connection.query(`INSERT INTO ${table} SET ?`, body, (err, results) => {
+            if (err) {
+                console.error("Error en la consulta INSERT:", err);
+                return reject({ error: true, message: "Error al insertar en la base de datos", details: err });
+            }
+
+            resolve({ id: results.insertId, ...body });
+        });
+    });
 }
 
-function del(table,id){
 
+function updateUser(table, body) {
+    return new Promise((resolve, reject) => {
+        connection.query(`UPDATE ${table} SET ? WHERE id=${body.id}`, body, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve({ ...body });
+        });
+    });
 }
+
+function deleteUser(table, id) {
+    return new Promise((resolve, reject) => {
+        connection.query(`DELETE FROM ${table} WHERE id=${id}`, (err, results) => {
+            if (err) {
+                return reject(err); 
+            }
+
+            if (results.affectedRows === 0) {
+                return resolve(null); 
+            }
+
+            resolve(true); 
+        });
+    });
+}
+
 
 module.exports = {
     all,
     one,
-    add,
-    del,
+    createUser,
+    updateUser,
+    deleteUser,
 }

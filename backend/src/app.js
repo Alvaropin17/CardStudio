@@ -4,6 +4,8 @@ const config = require('./config')
 const users = require('./modules/users/userController')
 
 const app = express();
+app.use(express.json());
+
 
 app.set('port', config.app.port);
 
