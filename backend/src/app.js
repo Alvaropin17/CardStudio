@@ -1,7 +1,7 @@
 const express = require('express');
 const config = require('./config')
 
-const users = require('./modules/users/userController')
+const users = require('./controllers/userController')
 
 const app = express();
 app.use(express.json());
