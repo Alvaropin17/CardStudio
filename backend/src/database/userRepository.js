@@ -1,7 +1,7 @@
 const Mysql = require('mysql2');
 const Config = require('../config');
 const Bcrypt = require('bcryptjs');
-const User = require('../models/user'); // Importamos la clase User correctamente
+const User = require('./models/user'); // Importamos la clase User correctamente
 
 const dbConfig = {
     host: Config.mysql.host,

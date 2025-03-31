@@ -1,5 +1,5 @@
 const UserRepository = require('../database/userRepository');
-const User = require('../models/user');
+const User = require('../database/models/user');
 
 
 function all() {
