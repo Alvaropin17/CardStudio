@@ -1,27 +1,27 @@
-const UserRepository = require('../database/userRepository');
-const User = require('../database/models/user');
+const userRepository = require('../../database/userRepository');
+const User = require('../../database/models/user');
 
 
 function all() {
-    return UserRepository.getAll();
+    return userRepository.getAll();
 }
 
 function one(id) {
-    return UserRepository.getOne(id);
+    return userRepository.getOne(id);
 }
 
 function createUser(body) {
     const newUser = new User(null, body.name, body.password);
-    return UserRepository.createUser(newUser);
+    return userRepository.createUser(newUser);
 }
 
 function updateUser(id, body) {
     const updatedUser = new User(id, body.name, body.password);
-    return UserRepository.updateUser(updatedUser);
+    return userRepository.updateUser(updatedUser);
 }
 
 function deleteUser(id) {
-    return UserRepository.deleteUser(id);
+    return userRepository.deleteUser(id);
 }
 
 module.exports = {

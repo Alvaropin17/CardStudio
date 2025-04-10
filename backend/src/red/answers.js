@@ -12,7 +12,7 @@ exports.error = function (req, res, msg, status){
     const statusCode = status || 500;
     const msgError = msg || '';
     res.status(statusCode).send({
-        error: false,
+        error: true,
         status: status,
         body: msgError
     })

@@ -12,10 +12,6 @@ class User {
         this.password = await bcrypt.hash(plainPassword, salt);
     }
 
-    async validarPassword(plainPassword) {
-        return await bcrypt.compare(plainPassword, this.password);
-    }
-
     toJSON() {
         return {
             id: this.id,
