@@ -1,6 +1,8 @@
 const Express = require('express');
 
-const answer = require('../../red/answers'); // Adjusted path to match the correct folder structure
+const { verifyToken, checkUserPermission } = require('../auth/authService');
+
+const answer = require('../../red/answers');
 const userService = require('../users/userService');
 const User = require('../../database/models/user');
 
@@ -10,8 +12,8 @@ const router = Express.Router();
 router.get('/', all);
 router.get('/:id', one);
 router.post('/', saveUser);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.put('/:id', verifyToken, checkUserPermission, updateUser);
+router.delete('/:id', verifyToken, checkUserPermission, deleteUser);
 
 
 async function all (req, res){
@@ -50,6 +52,7 @@ async function saveUser(req, res) {
 }
 
 async function updateUser(req, res) {
+
     const body = req.body;
     const userId = req.params.id;
 

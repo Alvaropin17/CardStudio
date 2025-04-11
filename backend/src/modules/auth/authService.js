@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const userRepository = require('../../database/userRepository');
 const jwt = require('./jsonwebtoken');
+const answer = require('../../red/answers');
 
 async function login(username, password) {
     const user = await userRepository.getByName(username);
@@ -25,7 +26,38 @@ async function login(username, password) {
 }
 
 
+function verifyToken(req, res, next) {
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ error: true, message: 'No token provided' });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    try {
+        const decoded = jwt.verifyToken(token); 
+        req.user = decoded; 
+        next();
+    } catch (err) {
+        return res.status(401).json({ error: true, message: 'Invalid or expired token' });
+    }
+}
+
+function checkUserPermission(req, res, next) {
+    const userIdFromToken = req.user?.id;
+    const userIdFromParams = parseInt(req.params.id);
+
+    if (userIdFromToken !== userIdFromParams) {
+        return answer.error(req, res, 'No tienes permisos para esta acción', 403);
+    }
+
+    next();
+}
+
 
 module.exports = {
-    login
+    login,
+    verifyToken,
+    checkUserPermission
 };
