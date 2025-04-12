@@ -74,13 +74,13 @@ async function deleteUser(req, res) {
         let deletedUser = await userService.deleteUser(req.params.id);
         
         if (!deletedUser) {
-            return answer.error(req, res, "Usuario no encontrado", 404); // 🔹 Si no existe, responde y termina
+            return answer.error(req, res, "Usuario no encontrado", 404);
         }
 
-        return answer.success(req, res, "Usuario eliminado correctamente", 200); // 🔹 Si se elimina, responde y termina
+        return answer.success(req, res, "Usuario eliminado correctamente", 200);
     } catch (error) {
-        console.error("Error al eliminar usuario:", error); // 🔹 Log para depuración
-        return answer.error(req, res, "Error en el servidor", 500); // 🔹 Manejo de errores
+        console.error("Error al eliminar usuario:", error);
+        return answer.error(req, res, "Error en el servidor", 500);
     }
 }
 
