@@ -6,6 +6,9 @@
     "frontend": {
       "projectType": "application",
       "schematics": {
+        "@angular/core:component": {
+          "standalone": false
+        },
         "@schematics/angular:component": {
           "style": "scss",
           "standalone": false
@@ -104,6 +107,11 @@
           }
         }
       }
+    }
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "standalone": false
     }
   },
   "cli": {

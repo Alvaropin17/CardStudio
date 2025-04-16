@@ -2,13 +2,20 @@ const bcrypt = require('bcryptjs');
 const userRepository = require('../../database/userRepository');
 const jwt = require('./jsonwebtoken');
 const answer = require('../../red/answers');
+const User = require('../../database/models/user');
 
 async function login(username, password) {
-    const user = await userRepository.getByName(username);
 
-    if (!user) {
+    console.log('username', username);
+    console.log('password', password);
+
+    const userData = await userRepository.getByName(username);
+
+    if (!userData) {
         throw { status: 401, message: 'Usuario no encontrado' };
     }
+
+    const user = new User(userData.id, userData.name, userData.password);
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -22,7 +29,10 @@ async function login(username, password) {
 
     const token = jwt.signToken(payload);
 
-    return { token };
+    return {
+        token,
+        user: user.toJSON()
+    };
 }
 
 
