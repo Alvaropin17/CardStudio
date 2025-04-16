@@ -5,10 +5,6 @@ const answer = require('../../red/answers');
 const User = require('../../database/models/user');
 
 async function login(username, password) {
-
-    console.log('username', username);
-    console.log('password', password);
-
     const userData = await userRepository.getByName(username);
 
     if (!userData) {

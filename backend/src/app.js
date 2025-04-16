@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const app = express();
+const cookieParser = require('cookie-parser');
 
 const config = require('./config')
 
@@ -7,10 +9,15 @@ const userController = require('./modules/users/userController')
 const loginController = require('./modules/auth/authController')
 
 
-const app = express();
 
-app.use(cors());
+
+app.use(cors({
+    origin: 'http://localhost:4200',  
+    credentials: true            
+  }));
 app.use(express.json());
+app.use(cookieParser());
+
 
 
 app.set('port', config.app.port);

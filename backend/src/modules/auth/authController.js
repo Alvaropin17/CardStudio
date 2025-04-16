@@ -11,7 +11,6 @@ router.post('/login', login);
 
 async function login(req, res, next) {
     try {
-        console.log(req.body);
         const loginAnswer = await loginService.login(req.body.user, req.body.password);
         answer.success(req, res, loginAnswer, 200);
     } catch (error) {

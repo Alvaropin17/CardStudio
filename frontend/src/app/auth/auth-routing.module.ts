@@ -4,13 +4,13 @@ import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   {
-    path: '',  // Ruta relativa: /auth/
-    component: LoginComponent  // Login como ruta por defecto del módulo
+    path: 'login',
+    component: LoginComponent
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],  // ¡Usa forChild()!
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
 export class AuthRoutingModule {}
