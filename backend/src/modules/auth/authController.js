@@ -12,7 +12,11 @@ router.post('/login', login);
 async function login(req, res, next) {
     try {
         const loginAnswer = await loginService.login(req.body.user, req.body.password);
-        answer.success(req, res, loginAnswer, 200);
+
+        res.cookie('token', loginAnswer.token, {
+            httpOnly: true,
+        });
+        answer.success(req, res, loginAnswer.user, 200);
     } catch (error) {
         console.error("Error:", error); 
         return answer.error(req, res, "Error en el servidor", 500);

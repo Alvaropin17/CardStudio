@@ -34,15 +34,14 @@ async function login(username, password) {
 
 function verifyToken(req, res, next) {
 
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).json({ error: true, message: 'No token provided' });
-    }
+    const tokenCookie = req.cookies.token;
 
-    const token = authHeader.split(' ')[1];
+    if (!tokenCookie) {
+        return res.status(401).json({ error: true, message: 'No token provided' });
+    }   
 
     try {
-        const decoded = jwt.verifyToken(token); 
+        const decoded = jwt.verifyToken(tokenCookie); 
         req.user = decoded; 
         next();
     } catch (err) {
