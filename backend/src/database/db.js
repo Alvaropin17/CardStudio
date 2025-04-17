@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const config = require('../config'); // Asegúrate de que esta ruta es correcta
+const config = require('../config');
 
 const dbConfig = {
     host: config.mysql.host,
@@ -34,4 +34,4 @@ function connectMysql() {
 
 connectMysql();
 
-module.exports = connection; // Exporta la conexión
+module.exports = connection;

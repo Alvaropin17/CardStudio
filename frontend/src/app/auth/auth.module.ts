@@ -9,13 +9,13 @@ import { User } from '../models/user';
 
 @NgModule({
   declarations: [
-    LoginComponent  // Declara todos los componentes del módulo
+    LoginComponent 
   ],
   imports: [
     CommonModule,
-    FormsModule,        // Para formularios template-driven
-    ReactiveFormsModule, // Para formularios reactivos
-    AuthRoutingModule   // Importa el routing del módulo
+    FormsModule,       
+    ReactiveFormsModule, 
+    AuthRoutingModule   
   ]
 })
 export class AuthModule {}

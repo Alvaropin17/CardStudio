@@ -4,12 +4,12 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   { 
     path: '',
-    redirectTo: 'auth',  // Redirige a las rutas de autenticación
+    redirectTo: 'auth',
     pathMatch: 'full'
   },
   {
     path: 'auth',
-    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) // Lazy Loading
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   }
 ];
 
