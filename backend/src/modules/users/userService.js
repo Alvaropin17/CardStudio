@@ -11,12 +11,12 @@ function one(id) {
 }
 
 function createUser(body) {
-    const newUser = new User(null, body.name, body.password);
+    const newUser = new User(null, body.name, body.password, body.email);
     return userRepository.createUser(newUser);
 }
 
 function updateUser(id, body) {
-    const updatedUser = new User(id, body.name, body.password);
+    const updatedUser = new User(id, body.name, body.password, body.email);
     return userRepository.updateUser(updatedUser);
 }
 

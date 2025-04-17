@@ -10,7 +10,7 @@ async function getAll() {
             if (err) {
                 return reject(err);
             }
-            const users = results.map((u) => new User(u.id, u.name, u.password));
+            const users = results.map((u) => new User(u.id, u.name, u.password, u.email));
             resolve(users);
         });
     });
@@ -28,7 +28,7 @@ async function getOne(id) {
             }
 
             const userData = results[0];
-            resolve(new User(userData.id, userData.name, userData.password));
+            resolve(new User(userData.id, userData.name, userData.password, userData.email));
         });
     });
 }
@@ -39,8 +39,8 @@ async function createUser(newUser) {
             newUser.password = await bcrypt.hash(newUser.password, 10);
 
             db.query(
-                `INSERT INTO users (name, password) VALUES (?, ?)`,
-                [newUser.name, newUser.password],
+                `INSERT INTO users (name, password, email) VALUES (?, ?, ?)`,
+                [newUser.name, newUser.password, newUser.email],
                 (err, results) => {
                     if (err) {
                         return reject({ error: true, message: 'Error inserting into database', details: err });
@@ -66,8 +66,8 @@ async function updateUser(updatedUser) {
             }
 
             db.query(
-                `UPDATE users SET name = ?, password = ? WHERE id = ?`,
-                [updatedUser.name, updatedPassword, updatedUser.id], 
+                `UPDATE users SET name = ?, password = ?, email = ? WHERE id = ?`,
+                [updatedUser.name, updatedPassword, updatedUser.email, updatedUser.id], 
                 (err, results) => {
                     if (err) {
                         return reject(err);
