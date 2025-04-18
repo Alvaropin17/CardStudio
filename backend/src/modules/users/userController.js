@@ -44,8 +44,8 @@ async function saveUser(req, res) {
     }
 
     try {
-        let result = await userService.createUser(body);
-        answer.success(req, res, result, 200);
+        let newUser = await userService.createUser(body);
+        answer.success(req, res, newUser, 200);
     } catch (error) {
         answer.error(req, res, "Error en el servidor", 500);
     }

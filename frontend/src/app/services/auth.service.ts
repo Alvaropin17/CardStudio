@@ -40,6 +40,13 @@ export class AuthService {
     );
   }
 
+  register(user: string, password: string, email: string): Observable<any> {  
+    return this.http.post<any>(`${this.baseUrl}/register`, { user, password, email 
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     const message = error.error?.message || 'Error en la comunicación con el servidor';
     return throwError(() => new Error(message));

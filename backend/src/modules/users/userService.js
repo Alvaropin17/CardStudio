@@ -11,7 +11,7 @@ function one(id) {
 }
 
 function createUser(body) {
-    const newUser = new User(null, body.name, body.password, body.email);
+    const newUser = new User(null, body.user, body.password, body.email);
     return userRepository.createUser(newUser);
 }
 
