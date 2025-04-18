@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError, map } from 'rxjs';
 import { LoginResponse } from '../models/login-response';
+import { RegisterResponse } from '../models/register-response';
 import { User } from '../models/user';
 
 @Injectable({
@@ -41,7 +42,7 @@ export class AuthService {
   }
 
   register(user: string, password: string, email: string): Observable<any> {  
-    return this.http.post<any>(`${this.baseUrl}/register`, { user, password, email 
+    return this.http.post<RegisterResponse>(`${this.baseUrl}/register`, { user, password, email 
     }).pipe(
       catchError(this.handleError)
     );

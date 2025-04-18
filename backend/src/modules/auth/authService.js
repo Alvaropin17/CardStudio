@@ -11,8 +11,6 @@ async function login(body) {
     const username = body.user;
     const password = body.password;
 
-    console.log('username', username);
-    console.log('password', password);
     const userData = await userRepository.getByName(username);
 
     if (!userData) {
@@ -70,14 +68,9 @@ function checkUserPermission(req, res, next) {
 //------------------------------------------Register Functions----------------------------------------//
 async function register(body) {
 
-    console.log('body', body);
     const username = body.user;
     const password = body.password;
     const email = body.email;
-
-    console.log('username', username);
-    console.log('password', password);
-    console.log('email', email);  
 
     if (!username || !password || !email) {
         throw { status: 400, message: 'Faltan campos obligatorios' };
