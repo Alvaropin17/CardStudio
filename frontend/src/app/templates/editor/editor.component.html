@@ -1,1 +1,10 @@
-<p>editor works!</p>
+<div class="editor-container">
+    <div class="toolbar">
+      <button (click)="addText()">Añadir texto</button>
+      <button (click)="addRectangle()">Añadir rectángulo</button>
+      <button (click)="clearCanvas()">Limpiar</button>
+    </div>
+  
+    <canvas #canvas></canvas>
+  </div>
+  

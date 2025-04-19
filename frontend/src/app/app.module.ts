@@ -7,19 +7,18 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
 import { HttpClientModule } from '@angular/common/http';
-import { EditorComponent } from './templates/editor/editor.component';
-
+import { TemplatesModule } from './templates/templates.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    EditorComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     AppRoutingModule,
     AuthModule, 
+    TemplatesModule,
     HttpClientModule
   ],
   providers: [],
