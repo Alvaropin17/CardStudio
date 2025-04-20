@@ -1,10 +1,57 @@
 <div class="editor-container">
-    <div class="toolbar">
-      <button (click)="addText()">Añadir texto</button>
-      <button (click)="addRectangle()">Añadir rectángulo</button>
-      <button (click)="clearCanvas()">Limpiar</button>
+  <div class="toolbar">
+    <div style="display: flex; justify-content: space-around;">
+      <div class="color-picker">
+        <label>
+          Color:
+          <input type="color" [(ngModel)]="selectedColor" />
+
+        </label>
+      </div>
+      <div class="color-picker">
+        <label>
+          Fuente:
+          <select [(ngModel)]="selectedFont" (change)="onFontChange()" style="width: 4rem; ">
+            <option value="Arial">Arial</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Comic Sans MS">Comic Sans MS</option>
+            <option value="Impact">Impact</option>
+          </select>
+
+        </label>
+      </div>
+      <div class="color-picker">
+        <label>
+          Tamaño:
+          <input type="number" [(ngModel)]="selectedFontSize"  style="max-width: 2rem;"/>
+        </label>
+      </div>
     </div>
-  
-    <canvas #canvas></canvas>
+    <div class="object-name">
+      <label>
+        Nombre del objeto:
+        <input type="text" [(ngModel)]="objectName"/>
+      </label>
+    </div>
+
+    <button (click)="addText()">Añadir texto</button>
+    <button (click)="addRectangle()">Añadir rectángulo</button>
+    <button (click)="addCircle()">Añadir círculo</button>
+    <button (click)="deleteActiveObject()">Eliminar elemento</button>
+    <button (click)="clearCanvas()">Limpiar</button>
   </div>
-  
+
+  <canvas #canvas></canvas>
+
+  <div class="position-control toolbar">
+    <h3>Objetos en el lienzo</h3>
+  <ul class="object-list">
+    <li class="list-element" *ngFor="let obj of canvasObjectsList">
+      <strong>{{ obj.name }}</strong> ({{ obj.type }})<br />
+      <small>ID: {{ obj.id }}</small>
+    </li>
+  </ul>
+  </div>
+</div>
