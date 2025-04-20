@@ -80,3 +80,24 @@ canvas {
   margin-bottom: 5px;
 
 }
+
+
+.arrow-buttons {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.arrow-buttons button {
+  font-size: 1rem;
+  padding: 0.2rem 0.5rem;
+  border: none;
+  background: #edf2f7;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.arrow-buttons button:hover {
+  background-color: #cbd5e0;
+}

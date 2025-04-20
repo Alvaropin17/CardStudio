@@ -48,10 +48,17 @@
   <div class="position-control toolbar">
     <h3>Objetos en el lienzo</h3>
   <ul class="object-list">
-    <li class="list-element" *ngFor="let obj of canvasObjectsList">
-      <strong>{{ obj.name }}</strong> ({{ obj.type }})<br />
-      <small>ID: {{ obj.id }}</small>
+    <li class="list-element" *ngFor="let object of canvasObjectsList" (click)="selectObjectFromList(object)">
+      <strong>{{ object.name }}</strong> ({{ object.type }})<br />
+      <small>ID: {{ object.id }}</small>
     </li>
   </ul>
+  </div>
+
+  <div class="arrow-buttons">
+    <button (click)="bringToFront()" title="Traer al frente">⏫</button>
+    <button (click)="moveUp()" title="Subir una capa">🔼</button>
+    <button (click)="moveDown()" title="Bajar una capa">🔽</button>
+    <button (click)="sendToBack()" title="Enviar al fondo">⏬</button>
   </div>
 </div>

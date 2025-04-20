@@ -15,6 +15,7 @@ export class EditorComponent implements AfterViewInit {
   private canvas!: fabric.Canvas;
 
   activeObject: fabric.Object | null = null;
+
   canvasObjectsList: CanvasObject[] = [];
 
 
@@ -24,7 +25,7 @@ export class EditorComponent implements AfterViewInit {
   selectedFont: string = 'Arial';
   selectedFontSize: number = 20;
 
-  onFontChange() {}
+  onFontChange() { }
 
   ngAfterViewInit(): void {
     this.canvas = new fabric.Canvas(this.canvasRef.nativeElement, {
@@ -54,7 +55,7 @@ export class EditorComponent implements AfterViewInit {
       fontSize: 24,
       fill: '#333'
     });
-  
+
     this.canvas.add(text);
   }
 
@@ -77,7 +78,7 @@ export class EditorComponent implements AfterViewInit {
     this.canvas.add(text);
     this.canvas.setActiveObject(text);
 
-    this.canvasObjectsList.push({
+    this.canvasObjectsList.unshift({
       id,
       name: this.objectName,
       type: 'Text',
@@ -100,7 +101,7 @@ export class EditorComponent implements AfterViewInit {
     this.canvas.add(rect);
     this.canvas.setActiveObject(rect);
 
-    this.canvasObjectsList.push({
+    this.canvasObjectsList.unshift({
       id,
       name: this.objectName,
       type: 'Rectangle',
@@ -122,7 +123,7 @@ export class EditorComponent implements AfterViewInit {
     this.canvas.add(circle);
     this.canvas.setActiveObject(circle);
 
-    this.canvasObjectsList.push({
+    this.canvasObjectsList.unshift({
       id,
       name: this.objectName,
       type: 'Circle',
@@ -132,8 +133,8 @@ export class EditorComponent implements AfterViewInit {
 
 
   deleteActiveObject() {
-    if (this.activeObject) {      
-  
+    if (this.activeObject) {
+
       const objectIndex = this.canvasObjectsList.findIndex(obj => obj.fabricObject === this.activeObject);
       if (objectIndex !== -1) {
         console.log('Objeto eliminado:', objectIndex);
@@ -141,20 +142,107 @@ export class EditorComponent implements AfterViewInit {
       }
 
       this.canvas.remove(this.activeObject);
-  
+
       this.activeObject = null;
-  
+
       this.canvas.renderAll();
     }
   }
-  
-  
+
+
   clearCanvas() {
     this.canvas.clear();
     this.canvas.backgroundColor = '#fff';
     this.canvas.renderAll();
-  
+
     this.canvasObjectsList = [];
   }
-  
+
+
+
+  //------------------------------------
+
+
+  selectObjectFromList(object: CanvasObject) {
+    const fabricObject = object.fabricObject;
+    if (fabricObject) {
+      this.canvas.setActiveObject(fabricObject);
+      this.activeObject = fabricObject;
+      this.canvas.renderAll();
+    }
+  }
+
+  private redrawCanvas(): void {
+    this.canvas.clear();
+    this.canvas.backgroundColor = '#fff';
+
+    const reversedList: CanvasObject[] = [...this.canvasObjectsList].reverse();
+
+    reversedList.forEach(obj => {
+      this.canvas.add(obj.fabricObject); 
+    });
+
+    if (this.activeObject) {
+      this.canvas.setActiveObject(this.activeObject);
+    }
+
+    this.canvas.renderAll();
+  }
+
+  moveUp(): void {
+    if (!this.activeObject) return;
+
+    const index = this.canvasObjectsList.findIndex(
+      obj => obj.fabricObject === this.activeObject
+    );
+
+    if (index > 0) { 
+      [this.canvasObjectsList[index], this.canvasObjectsList[index - 1]] =
+        [this.canvasObjectsList[index - 1], this.canvasObjectsList[index]];
+      this.redrawCanvas();
+    }
+  }
+
+  moveDown(): void {
+    if (!this.activeObject) return;
+
+    const index = this.canvasObjectsList.findIndex(
+      obj => obj.fabricObject === this.activeObject
+    );
+
+    if (index < this.canvasObjectsList.length - 1) { 
+      [this.canvasObjectsList[index], this.canvasObjectsList[index + 1]] =
+        [this.canvasObjectsList[index + 1], this.canvasObjectsList[index]];
+      this.redrawCanvas();
+    }
+  }
+
+  bringToFront(): void {
+    if (!this.activeObject) return;
+
+    const index = this.canvasObjectsList.findIndex(
+      obj => obj.fabricObject === this.activeObject
+    );
+
+    if (index !== 0) { 
+      const [movedObject] = this.canvasObjectsList.splice(index, 1);
+      this.canvasObjectsList.unshift(movedObject);
+      this.redrawCanvas();
+    }
+  }
+
+  sendToBack(): void {
+    if (!this.activeObject) return;
+
+    const index = this.canvasObjectsList.findIndex(
+      obj => obj.fabricObject === this.activeObject
+    );
+
+    if (index !== this.canvasObjectsList.length - 1) { 
+      const [movedObject] = this.canvasObjectsList.splice(index, 1);
+      this.canvasObjectsList.push(movedObject);
+      this.redrawCanvas();
+    }
+  }
+
 }
