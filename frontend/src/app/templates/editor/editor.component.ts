@@ -131,6 +131,34 @@ export class EditorComponent implements AfterViewInit {
     });
   }
 
+  loadImage(imagePath: string) {
+    fabric.FabricImage.fromURL(`images/${imagePath}`).then((img) => {
+      img.set({
+        left: 100,
+        top: 100,
+        scaleX: 0.5,
+        scaleY: 0.5,
+      });
+
+      const id = uuidv4();
+      img.set({ name: this.objectName, id });
+    
+      this.canvas.add(img);
+      this.canvas.setActiveObject(img);
+
+      this.canvasObjectsList.unshift({
+        id,
+        name: this.objectName,
+        type: 'Image',
+        fabricObject: img
+      });
+
+      this.canvas.renderAll();   
+    });
+    
+  }
+
+
 
   deleteActiveObject() {
     if (this.activeObject) {
@@ -179,7 +207,7 @@ export class EditorComponent implements AfterViewInit {
     const reversedList: CanvasObject[] = [...this.canvasObjectsList].reverse();
 
     reversedList.forEach(obj => {
-      this.canvas.add(obj.fabricObject); 
+      this.canvas.add(obj.fabricObject);
     });
 
     if (this.activeObject) {
@@ -196,7 +224,7 @@ export class EditorComponent implements AfterViewInit {
       obj => obj.fabricObject === this.activeObject
     );
 
-    if (index > 0) { 
+    if (index > 0) {
       [this.canvasObjectsList[index], this.canvasObjectsList[index - 1]] =
         [this.canvasObjectsList[index - 1], this.canvasObjectsList[index]];
       this.redrawCanvas();
@@ -210,7 +238,7 @@ export class EditorComponent implements AfterViewInit {
       obj => obj.fabricObject === this.activeObject
     );
 
-    if (index < this.canvasObjectsList.length - 1) { 
+    if (index < this.canvasObjectsList.length - 1) {
       [this.canvasObjectsList[index], this.canvasObjectsList[index + 1]] =
         [this.canvasObjectsList[index + 1], this.canvasObjectsList[index]];
       this.redrawCanvas();
@@ -224,7 +252,7 @@ export class EditorComponent implements AfterViewInit {
       obj => obj.fabricObject === this.activeObject
     );
 
-    if (index !== 0) { 
+    if (index !== 0) {
       const [movedObject] = this.canvasObjectsList.splice(index, 1);
       this.canvasObjectsList.unshift(movedObject);
       this.redrawCanvas();
@@ -238,7 +266,7 @@ export class EditorComponent implements AfterViewInit {
       obj => obj.fabricObject === this.activeObject
     );
 
-    if (index !== this.canvasObjectsList.length - 1) { 
+    if (index !== this.canvasObjectsList.length - 1) {
       const [movedObject] = this.canvasObjectsList.splice(index, 1);
       this.canvasObjectsList.push(movedObject);
       this.redrawCanvas();

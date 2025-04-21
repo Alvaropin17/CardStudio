@@ -1,0 +1,12 @@
+[
+    {
+      "nombre": "Dragón Rojo",
+      "imagen": "dragon.png",
+      "ataque": 5
+    },
+    {
+      "nombre": "Hechizo Verde",
+      "imagen": "hechizo.jpg",
+      "ataque": 2
+    }
+  ]
