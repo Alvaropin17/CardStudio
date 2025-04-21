@@ -131,31 +131,49 @@ export class EditorComponent implements AfterViewInit {
     });
   }
 
-  loadImage(imagePath: string) {
-    fabric.FabricImage.fromURL(`images/${imagePath}`).then((img) => {
+  async loadImage(imagePath: string): Promise<void> {
+    try {
+      const img = await fabric.FabricImage.fromURL(`images/${imagePath}`);
+
       img.set({
         left: 100,
         top: 100,
         scaleX: 0.5,
         scaleY: 0.5,
+        hasControls: true,
+        lockScalingFlip: true,
+        cornerStyle: 'circle',
+        transparentCorners: false
+      });
+    
+      img.setControlsVisibility({
+        mt: true, // middle top
+        mb: true, // middle bottom
+        ml: true, // middle left
+        mr: true, // middle right
+        tl: true, // top left
+        tr: true, // top right
+        bl: true, // bottom left
+        br: true  // bottom right
       });
 
       const id = uuidv4();
       img.set({ name: this.objectName, id });
-    
+
       this.canvas.add(img);
       this.canvas.setActiveObject(img);
 
       this.canvasObjectsList.unshift({
-        id,
+        id: id,
         name: this.objectName,
         type: 'Image',
         fabricObject: img
       });
 
-      this.canvas.renderAll();   
-    });
-    
+      this.canvas.renderAll();
+    } catch (error) {
+      console.error('Error al cargar imagen:', error);
+    }
   }
 
 
