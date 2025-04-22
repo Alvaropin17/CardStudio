@@ -42,6 +42,17 @@
     <button (click)="loadImage('dragon.jpg')">Añadir imagen</button>
     <button (click)="deleteActiveObject()">Eliminar elemento</button>
     <button (click)="clearCanvas()">Limpiar</button>
+    <button (click)="exportCanvasAsJson()">Exportar a JSON</button>
+    <div class="import-section">
+      <h3>Importar diseño desde JSON</h3>
+      <textarea [(ngModel)]="importedJson" rows="6" placeholder="Pega aquí tu JSON"></textarea>
+      <button (click)="importCanvasFromJsonString(importedJson)">Importar</button>
+    </div>
+    <div class="folder-upload">
+      <button (click)="triggerFolderInput()">Seleccionar Carpeta</button>
+      <input #folderInput type="file" webkitdirectory directory multiple accept="image/*"
+        (change)="handleFolderSelection($event)" style="display: none;">
+    </div>
   </div>
 
   <canvas #canvas></canvas>

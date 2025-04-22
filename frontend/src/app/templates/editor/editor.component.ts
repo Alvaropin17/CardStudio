@@ -14,6 +14,10 @@ export class EditorComponent implements AfterViewInit {
   @ViewChild('canvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
   private canvas!: fabric.Canvas;
 
+  @ViewChild('folderInput') folderInput!: ElementRef<HTMLInputElement>;
+
+  importedJson: string = '';
+
   activeObject: fabric.Object | null = null;
 
   canvasObjectsList: CanvasObject[] = [];
@@ -59,7 +63,7 @@ export class EditorComponent implements AfterViewInit {
     this.canvas.add(text);
   }
 
-
+  //------------------------------------TOOLBAR------------------------------------
 
 
   addText() {
@@ -145,7 +149,7 @@ export class EditorComponent implements AfterViewInit {
         cornerStyle: 'circle',
         transparentCorners: false
       });
-    
+
       img.setControlsVisibility({
         mt: true, // middle top
         mb: true, // middle bottom
@@ -206,7 +210,7 @@ export class EditorComponent implements AfterViewInit {
 
 
 
-  //------------------------------------
+  //------------------------------------LIST ------------------------------------
 
 
   selectObjectFromList(object: CanvasObject) {
@@ -291,4 +295,110 @@ export class EditorComponent implements AfterViewInit {
     }
   }
 
+  //------------------------------------CANVAS SAVE AND EXPORT------------------------------------
+
+  exportCanvasAsJson() {
+    const json = this.canvas.toJSON();
+    const jsonString = JSON.stringify(json);
+
+    navigator.clipboard?.writeText(jsonString).then(() => {
+      console.log('JSON copiado al portapapeles');
+    });
+    console.log(jsonString);
+  }
+
+  importCanvasFromJsonString(jsonString: string) {
+    try {
+      this.canvas.loadFromJSON(jsonString, () => {
+        // Hacemos una pequeña pausa para asegurarnos que todo está listo
+        setTimeout(() => {
+          this.canvas.renderAll(); // otra forma de forzar redibujo
+        }, 100);
+      });
+      
+    } catch (error) {
+      console.error('Error al cargar el JSON:', error);
+    }
+  }
+  
+/*
+    // Ejemplo: descargar el JSON como archivo
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'canvas-design.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  
+*/
+  /*exportCanvasAsImage() {
+  const dataURL = this.canvas.toDataURL({
+    format: 'png',
+    quality: 1.0
+  });
+
+  const link = document.createElement('a');
+  link.href = dataURL;
+  link.download = 'canvas.png';
+  link.click();
 }
+*/
+
+  //------------------------------------FOLDER INPUT------------------------------------
+
+  triggerFolderInput() {
+    this.folderInput.nativeElement.click();
+  }
+
+  async handleFolderSelection(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+
+    if (!files || files.length === 0) return;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.type.startsWith('image/')) {
+        await this.loadImageFromFile(file);
+      }
+    }
+  }
+
+  async loadImageFromFile(file: File): Promise<void> {
+    // Crear una URL temporal para el archivo
+    const imageUrl = URL.createObjectURL(file);
+
+    try {
+      const img = await fabric.FabricImage.fromURL(imageUrl);
+
+      img.set({
+        name: file.name,
+        left: Math.random() * 300,
+        top: Math.random() * 300,
+        scaleX: 0.5,
+        scaleY: 0.5,
+        angle: 0,
+        opacity: 1,
+        selectable: true,
+        hasControls: true,
+        lockScalingFlip: true,
+        cornerStyle: 'circle',
+        transparentCorners: false
+      });
+
+      // Añadir al canvas
+      this.canvas.add(img);
+      this.canvas.renderAll();
+
+    } catch (error) {
+      console.error('Error al cargar la imagen:', error);
+    } finally {
+      // Liberar la URL temporal
+      URL.revokeObjectURL(imageUrl);
+    }
+  }
+
+}
+
+
