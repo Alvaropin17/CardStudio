@@ -6,7 +6,7 @@ function all() {
     return userRepository.getAll();
 }
 
-function one(id) {
+function getUserById(id) {
     return userRepository.getOne(id);
 }
 
@@ -24,9 +24,14 @@ function deleteUser(id) {
     return userRepository.deleteUser(id);
 }
 
+function getUserByName(name) {
+    return userRepository.getByName(name);
+}   
+
 module.exports = {
     all,
-    one,
+    getUserById,
+    getUserByName,
     createUser,
     updateUser,
     deleteUser

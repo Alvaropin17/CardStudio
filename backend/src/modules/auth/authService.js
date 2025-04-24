@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const userRepository = require('../../database/userRepository');
+const userService = require('../../modules/users/userService');
 const jwt = require('./jsonwebtoken');
 const answer = require('../../red/answers');
 const User = require('../../database/models/user');
@@ -11,7 +11,7 @@ async function login(body) {
     const username = body.user;
     const password = body.password;
 
-    const userData = await userRepository.getByName(username);
+    const userData = await userService.getUserByName(username);
 
     if (!userData) {
         throw { status: 401, message: 'Usuario no encontrado' };
@@ -56,7 +56,7 @@ function verifyToken(req, res, next) {
 
 function checkUserPermission(req, res, next) {
     const userIdFromToken = req.user?.id;
-    const userIdFromParams = parseInt(req.params.id);
+    const userIdFromParams = parseInt(req.params.userId);
 
     if (userIdFromToken !== userIdFromParams) {
         return answer.error(req, res, 'No tienes permisos para esta acción', 403);
@@ -85,13 +85,13 @@ async function register(body) {
         throw { status: 400, message: 'El email no tiene un formato válido' };
     }
 
-    const existingUser = await userRepository.getByName(username);
+    const existingUser = await userService.getUserByName(username);
     if (existingUser) {
         throw { status: 409, message: 'El nombre de usuario ya existe' };
     }
 
     const newUser = new User(null, username, password, email);
-    const createdUser = await userRepository.createUser(newUser);
+    const createdUser = await userService.createUser(newUser);
 
     return {
         user: createdUser.toJSON()

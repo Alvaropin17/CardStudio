@@ -4,26 +4,27 @@ const { verifyToken, checkUserPermission } = require('../auth/authService');
 
 const answer = require('../../red/answers');
 const userService = require('../users/userService');
-const User = require('../../database/models/user');
 
 
 const router = Express.Router();
 
-router.get('/', all);
-router.get('/:id', one);
-router.post('/', saveUser);
-router.put('/:id', verifyToken, checkUserPermission, updateUser);
-router.delete('/:id', verifyToken, checkUserPermission, deleteUser);
+router.use('/:userId/templates', require('../templates/templateController'));
+
+router.get('/', getAllUsers);
+router.get('/:userId', getUserById);  
+router.post('/', createUser);
+router.put('/:userId', verifyToken, checkUserPermission, updateUser);
+router.delete('/:userId', verifyToken, checkUserPermission, deleteUser);
 
 
-async function all (req, res){
+async function getAllUsers (req, res){
     let allUsers = await  userService.all();
     answer.success(req, res, allUsers, 200);
 }
 
-async function one(req, res) {
+async function getUserById(req, res) {
     try {
-        let singleUser = await userService.one(req.params.id);
+        let singleUser = await userService.getUserById(req.params.userId);
         
         if (!singleUser) {
             return answer.error(req, res, "Usuario no encontrado", 404);
@@ -31,12 +32,12 @@ async function one(req, res) {
 
         return answer.success(req, res, singleUser, 200);
     } catch (error) {
-        console.error("Error en one:", error);
+        console.error("Error:", error);
         return answer.error(req, res, "Error en el servidor", 500);
     }
 }
 
-async function saveUser(req, res) {
+async function createUser(req, res) {
     const body = req.body;
 
     if (!body) {
@@ -54,7 +55,7 @@ async function saveUser(req, res) {
 async function updateUser(req, res) {
 
     const body = req.body;
-    const userId = req.params.id;
+    const userId = req.params.userId;
 
     if (!body || !userId) {
         return answer.error(req, res, "Datos inválidos", 400);
@@ -71,7 +72,7 @@ async function updateUser(req, res) {
 
 async function deleteUser(req, res) {
     try {
-        let deletedUser = await userService.deleteUser(req.params.id);
+        let deletedUser = await userService.deleteUser(req.params.userId);
         
         if (!deletedUser) {
             return answer.error(req, res, "Usuario no encontrado", 404);
