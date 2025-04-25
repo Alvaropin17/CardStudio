@@ -57,6 +57,64 @@
 
   <canvas #canvas></canvas>
 
+  <!------------------------------------------------------------------------------------------------------------------------------->
+
+  <div *ngIf="activeObject" class="editor-panel">
+    <h3>Editar objeto: {{getObjectTypeName()}}</h3>
+
+    <!-- Texto -->
+    <div *ngIf="isTextObject()" class="form-group">
+      <label>Texto:</label>
+      <input type="text" [ngModel]="getTextProperty('text')" (ngModelChange)="setTextProperty('text', $event)"
+        class="form-control" />
+    </div>
+
+    <!-- Color -->
+    <div class="form-group">
+      <label>Color de relleno:</label>
+      <input type="color" [value]="getObjectColor()" (input)="updateProperty('fill', $any($event.target).value)"
+        class="form-control" />
+    </div>
+
+    <!-- Tamaño de fuente -->
+    <div *ngIf="isTextObject()" class="form-group">
+      <label>Tamaño de fuente:</label>
+      <input type="number" [value]="getTextProperty('fontSize')"
+        (input)="setTextProperty('fontSize', $any($event.target).value)" min="8" max="120" class="form-control" />
+    </div>
+
+    <!-- Posición -->
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Posición X:</label>
+        <input type="number" [ngModel]="activeObject.left" (ngModelChange)="updateProperty('left', $event)"
+          class="form-control" />
+      </div>
+      <div class="form-group col-md-6">
+        <label>Posición Y:</label>
+        <input type="number" [ngModel]="activeObject.top" (ngModelChange)="updateProperty('top', $event)"
+          class="form-control" />
+      </div>
+    </div>
+
+    <!-- Opacidad -->
+    <div class="form-group">
+      <label>Opacidad: {{activeObject.opacity | percent:'1.0-2'}}</label>
+      <input type="range" [value]="activeObject.opacity"
+        (input)="updateProperty('opacity', this.parseFloatNumber($any($event.target).value))" min="0" max="1"
+        step="0.01" class="form-control" />
+    </div>
+
+    <!-- Rotación -->
+    <div class="form-group">
+      <label>Rotación: {{activeObject.angle}}°</label>
+      <input type="range" [value]="activeObject.angle"
+        (input)="updateProperty('angle', this.parseFloatNumber($any($event.target).value))" min="0" max="360"
+        class="form-control" />
+    </div>
+
+  </div>
+
   <div class="position-control toolbar">
     <h3>Objetos en el lienzo</h3>
     <div class="arrow-buttons">

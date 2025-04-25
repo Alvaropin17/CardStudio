@@ -22,7 +22,7 @@ export class AuthService {
     );
   }
 
-  // NEEDS TO BE IMPLEMENTED IN BACKEND
+  // TO DO: NEEDS TO BE IMPLEMENTED IN BACKEND
   checkAuth(): Observable<User> {
     return this.http.get<{ authenticated: boolean, user: User }>(`${this.baseUrl}/check`, {
       withCredentials: true
@@ -32,7 +32,7 @@ export class AuthService {
     );
   }
 
-  // NEEDS TO BE IMPLEMENTED IN BACKEND
+  // TO DO: NEEDS TO BE IMPLEMENTED IN BACKEND
   logout(): Observable<any> {
     return this.http.post(`${this.baseUrl}/logout`, {}, {
       withCredentials: true

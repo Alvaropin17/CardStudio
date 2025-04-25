@@ -315,23 +315,23 @@ export class EditorComponent implements AfterViewInit {
           this.canvas.renderAll(); // otra forma de forzar redibujo
         }, 100);
       });
-      
+
     } catch (error) {
       console.error('Error al cargar el JSON:', error);
     }
   }
-  
-/*
-    // Ejemplo: descargar el JSON como archivo
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'canvas-design.json';
-    link.click();
-    URL.revokeObjectURL(url);
-  
-*/
+
+  /*
+      // Ejemplo: descargar el JSON como archivo
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'canvas-design.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    
+  */
   /*exportCanvasAsImage() {
   const dataURL = this.canvas.toDataURL({
     format: 'png',
@@ -397,6 +397,69 @@ export class EditorComponent implements AfterViewInit {
       // Liberar la URL temporal
       URL.revokeObjectURL(imageUrl);
     }
+  }
+
+  //------------------------------------ELEMENT PROPERTIES------------------------------------
+
+  // Métodos del componente
+  getObjectTypeName(): string {
+    if (!this.activeObject) return '';
+    return this.activeObject.type === 'textbox' ? 'Texto' :
+      this.activeObject.type === 'rect' ? 'Rectángulo' :
+        this.activeObject.type === 'circle' ? 'Círculo' :
+          this.activeObject.type;
+  }
+
+  isTextObject(): boolean {
+    return this.activeObject?.type === 'textbox' || this.activeObject?.type === 'text';
+  }
+
+  getTextProperty(prop: string): any {
+    if (!this.isTextObject()) return null;
+    return (this.activeObject as fabric.Text).get(prop);
+  }
+
+  setTextProperty(prop: string, value: any): void {
+    if (!this.isTextObject()) return;
+
+    (this.activeObject as fabric.Text).set(prop, value);
+    if (prop === 'fontSize') {
+      (this.activeObject as fabric.Text).initDimensions();
+    }
+    this.updateCanvas();
+  }
+
+  getObjectColor(): string {
+    return this.activeObject?.fill?.toString() || '#000000';
+  }
+
+updateProperty(property: string, value: any): void {
+  if (!this.activeObject) return;
+  
+  // Conversión segura a número para propiedades de posición
+  if (property === 'left' || property === 'top' || property === 'angle') {
+    value = Number(value);
+    if (isNaN(value)) return; // Validación adicional
+  }
+
+  this.activeObject.set(property, value);
+  
+  // Actualización especial para propiedades que afectan el layout
+  if (this.isTextObject() && (property === 'fontSize' || property === 'text')) {
+    (this.activeObject as fabric.Text).initDimensions();
+  }
+  
+  // Forzar actualización visual
+  this.activeObject.setCoords(); // <-- Esto es clave para actualizar posición
+  this.canvas.requestRenderAll();
+}
+
+  updateCanvas(): void {
+    this.canvas?.requestRenderAll();
+  }
+
+  parseFloatNumber(value: string | number): number {
+    return parseFloat(value as string);
   }
 
 }
