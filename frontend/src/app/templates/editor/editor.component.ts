@@ -11,6 +11,7 @@ import * as fabric from 'fabric';
   standalone: false
 })
 export class EditorComponent implements AfterViewInit {
+
   @ViewChild('canvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
   private canvas!: fabric.Canvas;
 
@@ -22,12 +23,18 @@ export class EditorComponent implements AfterViewInit {
 
   canvasObjectsList: CanvasObject[] = [];
 
-
-  objectName: string = '';
+  elementCounter: number = 1;
+  objectName: string = 'Element';
+  newName: string = '';
 
   selectedColor: string = '#ff0000';
   selectedFont: string = 'Arial';
   selectedFontSize: number = 20;
+
+  updateObjectName() {
+    this.elementCounter++;
+    this.objectName = 'Element ' + this.elementCounter;
+  }
 
   onFontChange() { }
 
@@ -40,27 +47,24 @@ export class EditorComponent implements AfterViewInit {
 
     this.canvas.on('selection:created', (e) => {
       this.activeObject = e.selected ? e.selected[0] : null;
-      console.log('Objeto creado:', this.activeObject);
+      this.updateNewNameFromActiveObject(); // <-- sincroniza el nombre
     });
 
     this.canvas.on('selection:updated', (e) => {
       this.activeObject = e.selected ? e.selected[0] : null;
-      console.log('Objeto seleccionado:', this.activeObject);
+      this.updateNewNameFromActiveObject(); // <-- sincroniza el nombre
     });
 
     this.canvas.on('selection:cleared', () => {
       this.activeObject = null;
-      console.log('Ningún objeto seleccionado');
     });;
 
-    const text = new fabric.Text('Nombre de la carta', {
-      top: 50,
-      left: 100,
-      fontSize: 24,
-      fill: '#333'
-    });
+    this.canvas.renderAll();
 
-    this.canvas.add(text);
+  }
+
+  updateNewNameFromActiveObject() {
+    this.newName = (this.activeObject as any)?.name || '';
   }
 
   //------------------------------------TOOLBAR------------------------------------
@@ -88,6 +92,9 @@ export class EditorComponent implements AfterViewInit {
       type: 'Text',
       fabricObject: text
     });
+
+    this.updateObjectName();
+
   }
 
   addRectangle() {
@@ -111,6 +118,9 @@ export class EditorComponent implements AfterViewInit {
       type: 'Rectangle',
       fabricObject: rect
     });
+
+    this.updateObjectName();
+
   }
 
   addCircle() {
@@ -133,7 +143,43 @@ export class EditorComponent implements AfterViewInit {
       type: 'Circle',
       fabricObject: circle
     });
+
+    this.updateObjectName();
+
   }
+
+  addCanvasBorder() {
+    const border = new fabric.Rect({
+      left: 0.5,
+      top: 0.5,
+      width: this.canvas.getWidth() - 3,
+      height: this.canvas.getHeight() - 3,
+      fill: 'transparent',
+      stroke: 'black',
+      strokeUniform: true,
+      strokeWidth: 2,
+      selectable: true,
+      evented: true,
+      name: 'Borde',
+    });
+    
+  
+    const id = uuidv4();
+    border.set({ name: this.objectName, id });
+  
+    this.canvas.add(border);
+    this.canvas.setActiveObject(border);
+  
+    this.canvasObjectsList.unshift({
+      id,
+      name: this.objectName,
+      type: 'Border',
+      fabricObject: border
+    });
+  
+    this.updateObjectName(); // para que el próximo tenga un nombre nuevo
+  }
+  
 
   async loadImage(imagePath: string): Promise<void> {
     try {
@@ -174,13 +220,13 @@ export class EditorComponent implements AfterViewInit {
         fabricObject: img
       });
 
+      this.updateObjectName();
+
       this.canvas.renderAll();
     } catch (error) {
       console.error('Error al cargar imagen:', error);
     }
   }
-
-
 
   deleteActiveObject() {
     if (this.activeObject) {
@@ -199,7 +245,6 @@ export class EditorComponent implements AfterViewInit {
     }
   }
 
-
   clearCanvas() {
     this.canvas.clear();
     this.canvas.backgroundColor = '#fff';
@@ -207,8 +252,6 @@ export class EditorComponent implements AfterViewInit {
 
     this.canvasObjectsList = [];
   }
-
-
 
   //------------------------------------LIST ------------------------------------
 
@@ -238,6 +281,8 @@ export class EditorComponent implements AfterViewInit {
 
     this.canvas.renderAll();
   }
+
+  // Move object up or down in the list
 
   moveUp(): void {
     if (!this.activeObject) return;
@@ -309,17 +354,37 @@ export class EditorComponent implements AfterViewInit {
 
   importCanvasFromJsonString(jsonString: string) {
     try {
+
       this.canvas.loadFromJSON(jsonString, () => {
+        this.canvas.renderAll(); // fuerza un render completo
+
         // Hacemos una pequeña pausa para asegurarnos que todo está listo
         setTimeout(() => {
-          this.canvas.renderAll(); // otra forma de forzar redibujo
-        }, 100);
-      });
+          this.canvas.requestRenderAll();
+          // Limpiamos la lista anterior
+          this.canvasObjectsList = [];
+          // Recorremos todos los objetos del canvas y los agregamos a la lista
+          this.canvas.getObjects().forEach((obj: any) => {
+            const id = obj.id || uuidv4(); // Si no hay id, generamos uno nuevo
+            obj.set({ id }); // Nos aseguramos de que todos tengan id
 
+            this.canvasObjectsList.unshift({
+              id,
+              name: obj.name || 'Sin nombre',
+              type: obj.type,
+              fabricObject: obj
+            });
+          });  // otra forma de forzar redibujo
+        }, 100);
+
+        console.log(this.canvasObjectsList);
+        console.log('Canvas importado y lista de objetos reconstruida.');
+      });
     } catch (error) {
       console.error('Error al cargar el JSON:', error);
     }
   }
+
 
   /*
       // Ejemplo: descargar el JSON como archivo
@@ -401,13 +466,10 @@ export class EditorComponent implements AfterViewInit {
 
   //------------------------------------ELEMENT PROPERTIES------------------------------------
 
-  // Métodos del componente
-  getObjectTypeName(): string {
-    if (!this.activeObject) return '';
-    return this.activeObject.type === 'textbox' ? 'Texto' :
-      this.activeObject.type === 'rect' ? 'Rectángulo' :
-        this.activeObject.type === 'circle' ? 'Círculo' :
-          this.activeObject.type;
+  //----------Gets----------
+
+  getActiveObjectName(): string {
+    return (this.activeObject && (this.activeObject as any).name) || 'Sin nombre';
   }
 
   isTextObject(): boolean {
@@ -419,6 +481,31 @@ export class EditorComponent implements AfterViewInit {
     return (this.activeObject as fabric.Text).get(prop);
   }
 
+  getObjectColor(): string {
+    return this.activeObject?.fill?.toString() || '#000000';
+  }
+
+  parseFloatNumber(value: string | number): number {
+    return parseFloat(value as string);
+  }
+
+
+  //----------Sets----------
+
+  setNewName() {
+    if (this.activeObject && this.newName.trim() !== '') {
+      (this.activeObject as any).name = this.newName;
+
+      // Actualizamos también en la lista
+      const found = this.canvasObjectsList.find(obj => obj.fabricObject === this.activeObject);
+      if (found) {
+        found.name = this.newName;
+      }
+
+      this.canvas.renderAll();
+    }
+  }
+
   setTextProperty(prop: string, value: any): void {
     if (!this.isTextObject()) return;
 
@@ -426,40 +513,28 @@ export class EditorComponent implements AfterViewInit {
     if (prop === 'fontSize') {
       (this.activeObject as fabric.Text).initDimensions();
     }
-    this.updateCanvas();
+    this.canvas.requestRenderAll();
   }
 
-  getObjectColor(): string {
-    return this.activeObject?.fill?.toString() || '#000000';
-  }
+  updateProperty(property: string, value: any): void {
+    if (!this.activeObject) return;
 
-updateProperty(property: string, value: any): void {
-  if (!this.activeObject) return;
-  
-  // Conversión segura a número para propiedades de posición
-  if (property === 'left' || property === 'top' || property === 'angle') {
-    value = Number(value);
-    if (isNaN(value)) return; // Validación adicional
-  }
+    // Conversión segura a número para propiedades de posición
+    if (property === 'left' || property === 'top' || property === 'angle') {
+      value = Number(value);
+      if (isNaN(value)) return; // Validación adicional
+    }
 
-  this.activeObject.set(property, value);
-  
-  // Actualización especial para propiedades que afectan el layout
-  if (this.isTextObject() && (property === 'fontSize' || property === 'text')) {
-    (this.activeObject as fabric.Text).initDimensions();
-  }
-  
-  // Forzar actualización visual
-  this.activeObject.setCoords(); // <-- Esto es clave para actualizar posición
-  this.canvas.requestRenderAll();
-}
+    this.activeObject.set(property, value);
 
-  updateCanvas(): void {
-    this.canvas?.requestRenderAll();
-  }
+    // Actualización especial para propiedades que afectan el layout
+    if (this.isTextObject() && (property === 'fontSize' || property === 'text')) {
+      (this.activeObject as fabric.Text).initDimensions();
+    }
 
-  parseFloatNumber(value: string | number): number {
-    return parseFloat(value as string);
+    // Forzar actualización visual
+    this.activeObject.setCoords(); // <-- Esto es clave para actualizar posición
+    this.canvas.requestRenderAll();
   }
 
 }
