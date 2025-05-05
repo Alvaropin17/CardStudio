@@ -1,5 +1,5 @@
 const db = require('./db');
-const CsvDataSet = require('../models/csvDataset');
+const CsvDataSet = require('./models/csvDataSet');
 
 async function getAllByUser(userId) {
     return new Promise((resolve, reject) => {
