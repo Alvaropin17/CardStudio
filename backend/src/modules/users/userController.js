@@ -9,6 +9,7 @@ const userService = require('../users/userService');
 const router = Express.Router();
 
 router.use('/:userId/templates', require('../templates/templateController'));
+router.use('/:userId/csvDatasets', require('../csv/csvController'));
 
 router.get('/', getAllUsers);
 router.get('/:userId', getUserById);  
