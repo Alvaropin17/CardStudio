@@ -6,7 +6,7 @@ async function getAllByUser(userId) {
         db.query(`SELECT * FROM csv_datasets WHERE user_id = ?`, [userId], (err, results) => {
             if (err) return reject(err);
             const datasets = results.map(d =>
-                new CsvDataSet(d.id, d.user_id, d.name, JSON.parse(d.headers), JSON.parse(d.data_rows))
+                new CsvDataSet(d.id, d.user_id, d.name, d.headers, d.data)
             );
             resolve(datasets);
         });
@@ -19,7 +19,7 @@ async function getOne(id, userId) {
             if (err) return reject(err);
             if (results.length === 0) return resolve(null);
             const d = results[0];
-            resolve(new CsvDataSet(d.id, d.user_id, d.name, JSON.parse(d.headers), JSON.parse(d.data_rows)));
+            resolve(new CsvDataSet(d.id, d.user_id, d.name, d.headers, d.data));
         });
     });
 }
@@ -27,12 +27,12 @@ async function getOne(id, userId) {
 async function createCsvDataset(dataset) {
     return new Promise((resolve, reject) => {
         db.query(
-            `INSERT INTO csv_datasets (user_id, name, headers, data_rows) VALUES (?, ?, ?, ?)`,
+            `INSERT INTO csv_datasets (user_id, name, headers, data) VALUES (?, ?, ?, ?)`,
             [
                 dataset.user_id,
                 dataset.name,
                 JSON.stringify(dataset.headers),
-                JSON.stringify(dataset.data_rows)
+                JSON.stringify(dataset.data)
             ],
             (err, results) => {
                 if (err) return reject(err);
@@ -42,6 +42,8 @@ async function createCsvDataset(dataset) {
         );
     });
 }
+
+//TO DO: modification of dataset
 
 async function deleteCsvDataset(id, userId) {
     return new Promise((resolve, reject) => {

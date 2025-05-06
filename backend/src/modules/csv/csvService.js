@@ -15,7 +15,7 @@ async function createDataset(body, userId) {
     userId,
     body.name,
     body.headers || [],
-    body.data_rows || []
+    body.data || []
   );
   return await csvDatasetRepository.createCsvDataset(dataset);
 }

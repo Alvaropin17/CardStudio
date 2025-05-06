@@ -47,14 +47,14 @@ async function getTemplateById(req, res) {
 
 async function createTemplate(req, res) {
     const body = req.body;
-    const username = body.username;
+    const userId = req.params.userId;
     const canvas_json = body.canvas_json;
 
-    if (!username || !canvas_json) {
+    if (!canvas_json) {
         return answer.error(req, res, "Missing mandatory fields", 400);
     }
 
-    const user = await userService.getUserByName(username);
+    const user = await userService.getUserById(userId);
     if (!user) {
         return answer.error(req, res, "User not found", 404);
     }

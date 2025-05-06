@@ -42,13 +42,13 @@ async function getDatasetById(req, res) {
 // POST /users/:userId/datasets
 async function createDataset(req, res) {
   const body = req.body;
-  const username = body.username;
+  userId = req.params.userId;
 
-  if (!username || !body.name || !body.headers || !body.data_rows) {
+  if (!body.name || !body.headers || !body.data) {
     return answer.error(req, res, "Missing required fields", 400);
   }
 
-  const user = await userService.getUserByName(username);
+  const user = await userService.getUserById(userId);
   if (!user) {
     return answer.error(req, res, "User not found", 404);
   }

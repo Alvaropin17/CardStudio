@@ -32,7 +32,7 @@ async function createTemplate(template) {
     return new Promise((resolve, reject) => {
         db.query(
             `INSERT INTO templates (user_id, name, canvas_json) VALUES (?, ?, ?)`,
-            [template.user_id, template.name, template.canvas_json],
+            [template.user_id, template.name, JSON.stringify(template.canvas_json)],
             (err, results) => {
                 if (err) return reject(err);
                 template.id = results.insertId;
