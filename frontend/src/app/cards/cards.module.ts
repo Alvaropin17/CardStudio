@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TemplatesRoutingModule } from './templates-routing.module';
+import { CardsRoutingModule } from './cards-routing.module';
 import { EditorComponent } from './editor/editor.component';
 import { FormsModule } from '@angular/forms';
 import { CsvLoaderComponent } from './csv-loader/csv-loader.component';
@@ -13,7 +13,7 @@ import { CsvLoaderComponent } from './csv-loader/csv-loader.component';
   imports: [
     CommonModule,
     FormsModule,
-    TemplatesRoutingModule
+    CardsRoutingModule
   ]
 })
-export class TemplatesModule {}
+export class CardsModule {}

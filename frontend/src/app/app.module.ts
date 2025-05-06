@@ -6,10 +6,9 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
+import { CardsModule } from './cards/cards.module';
 import { HttpClientModule } from '@angular/common/http';
 import { VisualsModule } from './visuals/visuals.module';
-
-import { TemplatesModule } from './templates/templates.module';
 
 @NgModule({
   declarations: [
@@ -21,8 +20,7 @@ import { TemplatesModule } from './templates/templates.module';
     AppRoutingModule,
     AuthModule,
     VisualsModule,
-    AuthModule, 
-    TemplatesModule,
+    CardsModule, 
     HttpClientModule
   ],
   providers: [],
