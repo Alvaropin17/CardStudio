@@ -1,0 +1,42 @@
+:host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .csv-loader {
+    background-color: #fff;
+    padding: 2rem 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+  }
+  
+  input[type="file"]:focus {
+    border-color: #667eea;
+    outline: none;
+  }
+  

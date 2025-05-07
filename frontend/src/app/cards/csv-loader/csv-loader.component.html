@@ -1,5 +1,23 @@
 <div class="csv-loader">
-    <label for="csvInput">Subir archivo CSV:</label>
-    <input type="file" id="csvInput" (change)="onFileSelected($event)" accept=".csv" />
+  <label for="csvInput">Subir archivo CSV:</label>
+  <input type="file" id="csvInput" (change)="onFileSelected($event)" accept=".csv" />
+
+  <div *ngIf="file" class="mt-3">
+    <label for="datasetName">Nombre del dataset:</label>
+    <input type="text" id="datasetName" [(ngModel)]="name" placeholder="Ej: Mazo Magic" />
+
+    <button class="btn btn-primary mt-2" (click)="processCsv()">Procesar</button>
   </div>
+
+  <div *ngIf="dataset" class="mt-4">
+    <h4>Vista previa del dataset:</h4>
+    <p><strong>Name:</strong> {{ dataset.name }}</p>
+    <p><strong>Headers:</strong> {{ dataset.headers.join(', ') }}</p>
+    <p><strong>Nº of cards</strong> {{ dataset.data.length }}</p>
+
+    <button class="btn btn-success mt-2" (click)="saveCsv()" [disabled]="!dataset">Guardar CSV</button>
+  </div>
+
   
+
+</div>
