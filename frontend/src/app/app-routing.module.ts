@@ -14,7 +14,11 @@ const routes: Routes = [
   {
     path: 'cards',
     loadChildren: () => import('./cards/cards.module').then(m => m.CardsModule)
-  }
+  },
+  {
+    path: 'visuals',
+    loadChildren: () => import('./visuals/visuals.module').then(m => m.VisualsModule)
+  },
 ];
 
 @NgModule({

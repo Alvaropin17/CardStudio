@@ -17,7 +17,7 @@ async function login(body) {
         throw { status: 401, message: 'Usuario no encontrado' };
     }
 
-    const user = new User(userData.id, userData.name, userData.password);
+    const user = new User(userData.id, userData.name, userData.password, userData.email);
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {

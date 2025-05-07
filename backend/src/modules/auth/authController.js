@@ -10,7 +10,7 @@ const router = Express.Router();
 router.post('/login', login);
 router.post('/register', register);
 
-async function login(req, res, next) {
+async function login(req, res) {
     const body = req.body;
 
     if (!body) {

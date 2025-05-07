@@ -8,8 +8,8 @@ const userService = require('../users/userService');
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', getAllTemplates);
-router.get('/:id', getTemplateById);
+router.get('/', verifyToken, getAllTemplates);
+router.get('/:id', verifyToken, checkUserPermission, getTemplateById);
 router.post('/', verifyToken, checkUserPermission, createTemplate);
 router.put('/:id', verifyToken, checkUserPermission, updateTemplate);
 router.delete('/:id', verifyToken, checkUserPermission, deleteTemplate);

@@ -30,6 +30,7 @@ export class LoginComponent {
     this.authService.login(user, password).subscribe({
       next: (response) => {
         this.message = 'Login exitoso 🎉';
+        localStorage.setItem('user', JSON.stringify(response.body));
         console.log('Respuesta:', response);
       },
       error: (error) => {
