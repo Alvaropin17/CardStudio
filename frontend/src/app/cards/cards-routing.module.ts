@@ -9,9 +9,17 @@ const routes: Routes = [
     component: EditorComponent
   },
   {
+    path: 'editor/:id', // Para cargar un template existente
+    component: EditorComponent
+  },
+  {
     path: 'csv',
     component: CsvLoaderComponent
   },
+  {
+    path: 'csv/:id', // Para ver un CSV existente (si lo implementas)
+    component: CsvLoaderComponent
+  }
 ];
 
 @NgModule({

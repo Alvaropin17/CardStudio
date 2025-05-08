@@ -1,7 +1,7 @@
 import { Template } from "./template";
 
-export interface TemplateResponse {
+export interface UniqueTemplateResponse {
     error: boolean;
     status: number;
-    body: Template[];
+    body: Template;
 }

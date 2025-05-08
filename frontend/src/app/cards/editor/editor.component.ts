@@ -1,4 +1,5 @@
 import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CanvasObject } from '../models/canvas-object';
 import { v4 as uuidv4 } from 'uuid';
 import { TemplateService } from '../../services/template.service';
@@ -14,22 +15,32 @@ import * as fabric from 'fabric';
 })
 export class EditorComponent implements AfterViewInit {
 
-  constructor(private TemplateService: TemplateService) { }
+  constructor(
+    
+    private templateService: TemplateService,
+    private route: ActivatedRoute,
+
+  ) { }
 
   @ViewChild('canvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
-  private canvas!: fabric.Canvas;
-
+  
   @ViewChild('folderInput') folderInput!: ElementRef<HTMLInputElement>;
 
-  importedJson: string = '';
+  private canvas!: fabric.Canvas;
 
   activeObject: fabric.Object | null = null;
 
-  canvasObjectsList: CanvasObject[] = [];
+  importedJson: string = '';
 
   elementCounter: number = 1;
+
   objectName: string = 'Element';
   newName: string = '';
+
+
+
+  canvasObjectsList: CanvasObject[] = [];
+
 
   templateToSave: Template | null = null;
   templateName: string = '';
@@ -45,8 +56,34 @@ export class EditorComponent implements AfterViewInit {
   }
 
   onFontChange() { }
+  
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+  
+    if (id && user?.id) {
+      this.templateService.getTemplateById(user.id, +id).subscribe({
+        next: (templateResponse) => {
+
+          this.importedJson = templateResponse.body.canvas_json;
+          this.loadCanvasFromJson();
+        },
+        error: (err) => {
+          console.error('Error al cargar template:', err);
+        }
+      });
+    }
+  }
 
   ngAfterViewInit(): void {
+
+    if (this.importedJson && this.canvas) {
+      this.canvas.loadFromJSON(this.importedJson, () => {
+        this.canvas.renderAll();
+        console.log('Template cargado en el canvas');
+      });
+    }
+
     this.canvas = new fabric.Canvas(this.canvasRef.nativeElement, {
       width: 600,
       height: 900,
@@ -374,7 +411,7 @@ export class EditorComponent implements AfterViewInit {
     this.templateToSave.name = this.templateName;
     this.templateToSave.user_id = userId;
 
-    this.TemplateService.createTemplate(userId, this.templateToSave).subscribe({
+    this.templateService.createTemplate(userId, this.templateToSave).subscribe({
       next: (res) => {  
         console.log('Plantilla guardada correctamente:', res);
         alert('Plantilla guardada con éxito ✅');
@@ -389,6 +426,32 @@ export class EditorComponent implements AfterViewInit {
 
   }
 
+  loadCanvasFromJson(): void {
+    if (this.canvas && this.importedJson) {
+      this.canvas.loadFromJSON(this.importedJson, () => {
+        this.canvas.renderAll(); // fuerza un render completo
+
+        // Hacemos una pequeña pausa para asegurarnos que todo está listo
+        setTimeout(() => {
+          this.canvas.requestRenderAll();
+          // Limpiamos la lista anterior
+          this.canvasObjectsList = [];
+          // Recorremos todos los objetos del canvas y los agregamos a la lista
+          this.canvas.getObjects().forEach((obj: any) => {
+            const id = obj.id || uuidv4(); // Si no hay id, generamos uno nuevo
+            obj.set({ id }); // Nos aseguramos de que todos tengan id
+
+            this.canvasObjectsList.unshift({
+              id,
+              name: obj.name || 'Sin nombre',
+              type: obj.type,
+              fabricObject: obj
+            });
+          });  // otra forma de forzar redibujo
+        }, 100);
+      });
+    }
+  }
 
   importCanvasFromJsonString(jsonString: string) {
     try {

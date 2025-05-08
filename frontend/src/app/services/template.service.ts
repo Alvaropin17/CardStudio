@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
-import { TemplateResponse } from '../models/template-response';
+import { TemplatesResponse } from '../models/templates-response';
+import { UniqueTemplateResponse } from '../models/unique-template-response';
 import { Template } from '../models/template';
 
 @Injectable({
@@ -13,32 +14,32 @@ export class TemplateService {
 
   constructor(private http: HttpClient) {}
 
-  getAllTemplatesById(userId: number): Observable<TemplateResponse> {
-    return this.http.get<TemplateResponse>(`${this.baseUrl}/${userId}/templates/`, {
+  getAllTemplatesById(userId: number): Observable<TemplatesResponse> {
+    return this.http.get<TemplatesResponse>(`${this.baseUrl}/${userId}/templates/`, {
       withCredentials: true
     }).pipe(
       catchError(this.handleError)
     );
   }
 
-  getTemplateById(userId: number, templateId: number): Observable<TemplateResponse> {
-    return this.http.get<TemplateResponse>(`${this.baseUrl}/${userId}/templates/${templateId}`, {
+  getTemplateById(userId: number, templateId: number): Observable<UniqueTemplateResponse> {
+    return this.http.get<UniqueTemplateResponse>(`${this.baseUrl}/${userId}/templates/${templateId}`, {
       withCredentials: true
     }).pipe(
       catchError(this.handleError)
     );
   }
 
-  createTemplate(userId: number, template: Template): Observable<TemplateResponse> {
-    return this.http.post<TemplateResponse>(`${this.baseUrl}/${userId}/templates/`, template, {
+  createTemplate(userId: number, template: Template): Observable<UniqueTemplateResponse> {
+    return this.http.post<UniqueTemplateResponse>(`${this.baseUrl}/${userId}/templates/`, template, {
       withCredentials: true
     }).pipe(
       catchError(this.handleError)
     );
   }
 
-  updateTemplate(userId: number, templateId: number, template: Template): Observable<TemplateResponse> {
-    return this.http.put<TemplateResponse>(`${this.baseUrl}/${userId}/templates/${templateId}`, template, {
+  updateTemplate(userId: number, templateId: number, template: Template): Observable<UniqueTemplateResponse> {
+    return this.http.put<UniqueTemplateResponse>(`${this.baseUrl}/${userId}/templates/${templateId}`, template, {
       withCredentials: true
     }).pipe(
       catchError(this.handleError)
