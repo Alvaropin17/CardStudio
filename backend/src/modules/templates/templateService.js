@@ -10,14 +10,27 @@ async function getTemplateById(id, userId) {
 }
 
 async function createTemplate(body, userId) {
-  const template = new Template(null, userId, body.name, body.canvas_json);
+  const template = new Template(
+    null,
+    userId,
+    body.name,
+    body.csv_id ?? null,
+    body.canvas_json
+  );
   return await templateRepository.createTemplate(template);
 }
 
 async function updateTemplate(body, id, userId) {
   const existing = await templateRepository.getOne(id, userId);
 
-  const updated = new Template(id, userId, body.name || existing.name, body.canvas_json || existing.canvas_jsons);
+  const updated = new Template(
+    id,
+    userId,
+    body.name || existing.name,
+    body.csv_id ?? existing.csv_id,
+    body.canvas_json || existing.canvas_json
+  );
+
   return await templateRepository.updateTemplate(updated);
 }
 

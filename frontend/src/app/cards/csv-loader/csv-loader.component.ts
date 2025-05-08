@@ -19,7 +19,7 @@ export class CsvLoaderComponent {
   headers: string[] = [];
   data: Array<{ [key: string]: string }> = [];
   dataset: CsvDataset | null = null;
-  name: string = ''; 
+  csvName: string = ''; 
 
 
   onFileSelected(event: any): void {
@@ -40,7 +40,7 @@ export class CsvLoaderComponent {
           this.data = parsedData;
 
           this.dataset = {
-            name: this.name || this.file!.name.replace('.csv', ''),
+            name: this.csvName || this.file!.name.replace('.csv', ''),
             headers: this.headers,
             data: this.data
           };
@@ -76,6 +76,10 @@ export class CsvLoaderComponent {
         alert('Error al guardar el dataset ❌');
       }
     });
+
+    this.dataset = null; 
+
   }
+
 
 }

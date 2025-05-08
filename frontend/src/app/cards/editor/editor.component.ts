@@ -1,6 +1,8 @@
 import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CanvasObject } from '../models/canvas-object';
 import { v4 as uuidv4 } from 'uuid';
+import { TemplateService } from '../../services/template.service';
+import { Template } from '../../models/template';
 
 import * as fabric from 'fabric';
 
@@ -11,6 +13,8 @@ import * as fabric from 'fabric';
   standalone: false
 })
 export class EditorComponent implements AfterViewInit {
+
+  constructor(private TemplateService: TemplateService) { }
 
   @ViewChild('canvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
   private canvas!: fabric.Canvas;
@@ -26,6 +30,10 @@ export class EditorComponent implements AfterViewInit {
   elementCounter: number = 1;
   objectName: string = 'Element';
   newName: string = '';
+
+  templateToSave: Template | null = null;
+  templateName: string = '';
+
 
   selectedColor: string = '#ff0000';
   selectedFont: string = 'Arial';
@@ -177,7 +185,7 @@ export class EditorComponent implements AfterViewInit {
       fabricObject: border
     });
   
-    this.updateObjectName(); // para que el próximo tenga un nombre nuevo
+    this.updateObjectName(); 
   }
   
 
@@ -342,15 +350,45 @@ export class EditorComponent implements AfterViewInit {
 
   //------------------------------------CANVAS SAVE AND EXPORT------------------------------------
 
-  exportCanvasAsJson() {
-    const json = this.canvas.toJSON();
-    const jsonString = JSON.stringify(json);
+  exportCanvasAsJson(): void {
+    this.templateToSave = null;
+    const canvasJson = JSON.stringify(this.canvas);
+  
+    this.templateToSave = {
+      user_id: 0,
+      name: '',
+      canvas_json: canvasJson
+    };
 
-    navigator.clipboard?.writeText(jsonString).then(() => {
-      console.log('JSON copiado al portapapeles');
-    });
-    console.log(jsonString);
+    navigator.clipboard?.writeText(canvasJson);
+  
   }
+  
+  saveCanvas(): void {
+    const user = localStorage.getItem('user');
+    if (!user || !this.templateToSave) return;
+
+    const parsedUser = JSON.parse(user);
+    const userId = parsedUser.id;
+
+    this.templateToSave.name = this.templateName;
+    this.templateToSave.user_id = userId;
+
+    this.TemplateService.createTemplate(userId, this.templateToSave).subscribe({
+      next: (res) => {  
+        console.log('Plantilla guardada correctamente:', res);
+        alert('Plantilla guardada con éxito ✅');
+      }
+      , error: (err) => {
+        console.error('Error al guardar plantilla:', err);
+        alert('Error al guardar la plantilla ❌');
+      }
+    });
+  
+    this.templateToSave = null;
+
+  }
+
 
   importCanvasFromJsonString(jsonString: string) {
     try {
@@ -376,9 +414,6 @@ export class EditorComponent implements AfterViewInit {
             });
           });  // otra forma de forzar redibujo
         }, 100);
-
-        console.log(this.canvasObjectsList);
-        console.log('Canvas importado y lista de objetos reconstruida.');
       });
     } catch (error) {
       console.error('Error al cargar el JSON:', error);

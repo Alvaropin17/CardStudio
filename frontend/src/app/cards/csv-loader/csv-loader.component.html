@@ -4,7 +4,7 @@
 
   <div *ngIf="file" class="mt-3">
     <label for="datasetName">Nombre del dataset:</label>
-    <input type="text" id="datasetName" [(ngModel)]="name" placeholder="Ej: Mazo Magic" />
+    <input type="text" id="datasetName" [(ngModel)]="csvName" placeholder="Ej: Mazo Magic" />
 
     <button class="btn btn-primary mt-2" (click)="processCsv()">Procesar</button>
   </div>

@@ -1,7 +1,6 @@
 const express = require('express');
 const answer = require('../../red/answers');
 
-
 const { verifyToken, checkUserPermission } = require('../auth/authService');
 const templateService = require('../templates/templateService'); 
 const userService = require('../users/userService');
@@ -14,14 +13,12 @@ router.post('/', verifyToken, checkUserPermission, createTemplate);
 router.put('/:id', verifyToken, checkUserPermission, updateTemplate);
 router.delete('/:id', verifyToken, checkUserPermission, deleteTemplate);
 
-
 async function getAllTemplates(req, res) {
     const userId = req.params.userId;
-    
+
     try {
         const templates = await templateService.getAllTemplatesByUser(userId);
         return answer.success(req, res, templates, 200);
-        
     } catch (error) {
         return answer.error(req, res, "Error when obtaining the templates", 500);
     }
@@ -30,9 +27,6 @@ async function getAllTemplates(req, res) {
 async function getTemplateById(req, res) {
     const userId = req.params.userId;
     const id = req.params.id;
-
-    console.log('userId', userId);
-    console.log('id', id);
 
     try {
         const template = await templateService.getTemplateById(id, userId);
@@ -48,9 +42,8 @@ async function getTemplateById(req, res) {
 async function createTemplate(req, res) {
     const body = req.body;
     const userId = req.params.userId;
-    const canvas_json = body.canvas_json;
 
-    if (!canvas_json) {
+    if (!body.name || !body.canvas_json) {
         return answer.error(req, res, "Missing mandatory fields", 400);
     }
 
@@ -67,10 +60,12 @@ async function createTemplate(req, res) {
     }
 }
 
+
 async function updateTemplate(req, res) {
     const body = req.body;
     const id = req.params.id;
     const userId = req.params.userId;
+
     try {
         const existing = await templateService.getTemplateById(id, userId);
         if (!existing) {
@@ -78,7 +73,6 @@ async function updateTemplate(req, res) {
         }
         const result = await templateService.updateTemplate(body, id, userId);
         return answer.success(req, res, result, 200);
-
     } catch (error) {
         return answer.error(req, res, "Error when updating the template", 500);
     }
