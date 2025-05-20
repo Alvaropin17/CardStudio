@@ -6,6 +6,12 @@ import { TemplateService } from '../../services/template.service';
 import { Template } from '../../models/template';
 
 import * as fabric from 'fabric';
+import { CustomRect } from '../fabric/CustomRect';
+import { CustomCircle } from '../fabric/CustomCircle';
+import { CustomImage } from '../fabric/CustomImage';
+import { CustomTextbox } from '../fabric/CustomTextbox';
+
+
 
 @Component({
   selector: 'app-editor',
@@ -15,15 +21,17 @@ import * as fabric from 'fabric';
 })
 export class EditorComponent implements AfterViewInit {
 
+  
+
   constructor(
-    
+
     private templateService: TemplateService,
     private route: ActivatedRoute,
 
   ) { }
 
   @ViewChild('canvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
-  
+
   @ViewChild('folderInput') folderInput!: ElementRef<HTMLInputElement>;
 
   private canvas!: fabric.Canvas;
@@ -38,7 +46,6 @@ export class EditorComponent implements AfterViewInit {
   newName: string = '';
 
 
-
   canvasObjectsList: CanvasObject[] = [];
 
 
@@ -50,17 +57,20 @@ export class EditorComponent implements AfterViewInit {
   selectedFont: string = 'Arial';
   selectedFontSize: number = 20;
 
+  selectedFontFamily: string = 'Arial, sans-serif';
+
   updateObjectName() {
     this.elementCounter++;
     this.objectName = 'Element ' + this.elementCounter;
   }
 
   onFontChange() { }
-  
+
   ngOnInit(): void {
+
     const id = this.route.snapshot.paramMap.get('id');
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-  
+
     if (id && user?.id) {
       this.templateService.getTemplateById(user.id, +id).subscribe({
         next: (templateResponse) => {
@@ -116,7 +126,7 @@ export class EditorComponent implements AfterViewInit {
 
 
   addText() {
-    const text = new fabric.Textbox('Texto nuevo', {
+    const text = new CustomTextbox('Texto nuevo', {
       left: 50,
       top: 50,
       width: 200,
@@ -143,7 +153,7 @@ export class EditorComponent implements AfterViewInit {
   }
 
   addRectangle() {
-    const rect = new fabric.Rect({
+    const rect = new CustomRect({
       left: 100,
       top: 150,
       fill: this.selectedColor,
@@ -169,11 +179,11 @@ export class EditorComponent implements AfterViewInit {
   }
 
   addCircle() {
-    const circle = new fabric.Circle({
+    const circle = new CustomCircle({
       left: 300,
       top: 150,
       radius: 50,
-      fill: this.selectedColor
+      fill: this.selectedColor,
     });
 
     const id = uuidv4();
@@ -207,28 +217,28 @@ export class EditorComponent implements AfterViewInit {
       evented: true,
       name: 'Borde',
     });
-    
-  
+
+
     const id = uuidv4();
     border.set({ name: this.objectName, id });
-  
+
     this.canvas.add(border);
     this.canvas.setActiveObject(border);
-  
+
     this.canvasObjectsList.unshift({
       id,
       name: this.objectName,
       type: 'Border',
       fabricObject: border
     });
-  
-    this.updateObjectName(); 
+
+    this.updateObjectName();
   }
-  
+
 
   async loadImage(imagePath: string): Promise<void> {
     try {
-      const img = await fabric.FabricImage.fromURL(`images/${imagePath}`);
+      const img = await CustomImage.fromURL(`images/${imagePath}`);
 
       img.set({
         left: 100,
@@ -389,8 +399,8 @@ export class EditorComponent implements AfterViewInit {
 
   exportCanvasAsJson(): void {
     this.templateToSave = null;
-    const canvasJson = JSON.stringify(this.canvas);
-  
+    const canvasJson = JSON.stringify((this.canvas as any).toJSON(['name', 'id']));
+
     this.templateToSave = {
       user_id: 0,
       name: '',
@@ -398,9 +408,9 @@ export class EditorComponent implements AfterViewInit {
     };
 
     navigator.clipboard?.writeText(canvasJson);
-  
+
   }
-  
+
   saveCanvas(): void {
     const user = localStorage.getItem('user');
     if (!user || !this.templateToSave) return;
@@ -412,7 +422,7 @@ export class EditorComponent implements AfterViewInit {
     this.templateToSave.user_id = userId;
 
     this.templateService.createTemplate(userId, this.templateToSave).subscribe({
-      next: (res) => {  
+      next: (res) => {
         console.log('Plantilla guardada correctamente:', res);
         alert('Plantilla guardada con éxito ✅');
       }
@@ -421,7 +431,7 @@ export class EditorComponent implements AfterViewInit {
         alert('Error al guardar la plantilla ❌');
       }
     });
-  
+
     this.templateToSave = null;
 
   }
@@ -447,7 +457,7 @@ export class EditorComponent implements AfterViewInit {
               type: obj.type,
               fabricObject: obj
             });
-          });  // otra forma de forzar redibujo
+          });
         }, 100);
       });
     }
@@ -457,17 +467,14 @@ export class EditorComponent implements AfterViewInit {
     try {
 
       this.canvas.loadFromJSON(jsonString, () => {
-        this.canvas.renderAll(); // fuerza un render completo
+        this.canvas.renderAll();
 
-        // Hacemos una pequeña pausa para asegurarnos que todo está listo
         setTimeout(() => {
           this.canvas.requestRenderAll();
-          // Limpiamos la lista anterior
           this.canvasObjectsList = [];
-          // Recorremos todos los objetos del canvas y los agregamos a la lista
           this.canvas.getObjects().forEach((obj: any) => {
-            const id = obj.id || uuidv4(); // Si no hay id, generamos uno nuevo
-            obj.set({ id }); // Nos aseguramos de que todos tengan id
+            const id = obj.id || uuidv4();
+            obj.set({ id });
 
             this.canvasObjectsList.unshift({
               id,
@@ -475,14 +482,13 @@ export class EditorComponent implements AfterViewInit {
               type: obj.type,
               fabricObject: obj
             });
-          });  // otra forma de forzar redibujo
+          });
         }, 100);
-      });
+      }) ;
     } catch (error) {
       console.error('Error al cargar el JSON:', error);
     }
   }
-
 
   /*
       // Ejemplo: descargar el JSON como archivo
