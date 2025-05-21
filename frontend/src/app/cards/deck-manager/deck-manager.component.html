@@ -11,7 +11,7 @@
                     (click)="onSelectTemplate(template)">
                     {{ template.name }}
                     <div class="action-buttons" *ngIf="template.id === selectedTemplate?.id">
-                        <button class="btn-link btn-link--delete" (click)="assingCsvToTemplate(template.id)">
+                        <button class="btn-link btn-link--delete" (click)="assingCsvToTemplate()">
                             Asignar CSV
                         </button>
                         <a class="btn-link btn-link--edit" [routerLink]="['/cards/editor', template.id]">

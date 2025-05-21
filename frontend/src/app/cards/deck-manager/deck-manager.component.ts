@@ -16,7 +16,6 @@ export class DeckManagerComponent {
 
   selectedTemplate: any = null;
   selectedCsv: any = null;
-  isAssigning = false;
 
   constructor(private templateService: TemplateService, private csvService: CsvDataService) { }
 
@@ -71,7 +70,21 @@ export class DeckManagerComponent {
     });
   }
 
-  assingCsvToTemplate(templateId: number): void {
+  assingCsvToTemplate(): void {
+    if (this.selectedCsv) {
+      this.templateService.assignCsvToTemplate(this.user.id, this.selectedTemplate.id, this.selectedCsv.id).subscribe({
+        next: () => {
+          alert('CSV assigned to template successfully');
+          this.selectedCsv = null;
+          this.selectedTemplate = null;
+        },
+        error: (err) => {
+          console.error('Error assigning CSV to template:', err);
+        }
+      });
+    } else {
+      alert('Please select a CSV to assign.');
+    }
   
   }
 

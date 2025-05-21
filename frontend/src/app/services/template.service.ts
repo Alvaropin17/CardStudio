@@ -38,6 +38,14 @@ export class TemplateService {
     );
   }
 
+  assignCsvToTemplate(userId: number, templateId: number, csvId: number): Observable<UniqueTemplateResponse> {
+    return this.http.post<UniqueTemplateResponse>(`${this.baseUrl}/${userId}/templates/${templateId}/csv/${csvId}`, {}, {
+      withCredentials: true
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   updateTemplate(userId: number, templateId: number, template: Template): Observable<UniqueTemplateResponse> {
     return this.http.put<UniqueTemplateResponse>(`${this.baseUrl}/${userId}/templates/${templateId}`, template, {
       withCredentials: true
