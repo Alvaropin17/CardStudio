@@ -11,7 +11,7 @@
                     (click)="onSelectTemplate(template)">
                     {{ template.name }}
                     <div class="action-buttons" *ngIf="template.id === selectedTemplate?.id">
-                        <button class="btn-link btn-link--delete" (click)="deleteTemplate(template.id)">
+                        <button class="btn-link btn-link--delete" (click)="assingCsvToTemplate(template.id)">
                             Asignar CSV
                         </button>
                         <a class="btn-link btn-link--edit" [routerLink]="['/cards/editor', template.id]">
@@ -29,7 +29,8 @@
             <h4>CSV Datasets</h4>
             <ul class="list-group">
                 <li class="list-group-item d-flex justify-content-between align-items-center"
-                    *ngFor="let csv of csvDatasets">
+                    *ngFor="let csv of csvDatasets" [class.selected]="csv.id === selectedCsv?.id"
+                    (click)="onSelectCsv(csv)">
                     {{ csv.name }}
                     <div class="action-buttons"  *ngIf="csv.id === selectedCsv?.id">
                         <a class="btn-link btn-link--edit" [routerLink]="['/cards/csv', csv.id]">

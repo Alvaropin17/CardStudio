@@ -43,8 +43,8 @@ async function createTemplate(template) {
 async function updateTemplate(template) {
     return new Promise((resolve, reject) => {
         db.query(
-            `UPDATE templates SET name = ?, csv_id = ?, canvas_json = ? WHERE id = ? AND user_id = ?`,
-            [template.name, template.csv_id, JSON.stringify(template.canvas_json), template.id, template.user_id],
+            `UPDATE templates SET name = ?, canvas_json = ? WHERE id = ? AND user_id = ?`,
+            [template.name, JSON.stringify(template.canvas_json), template.id, template.user_id],
             (err, results) => {
                 if (err) return reject(err);
                 if (results.affectedRows === 0) return resolve(null);
@@ -63,10 +63,24 @@ async function deleteTemplate(id, userId) {
     });
 }
 
+async function assignCsvToTemplate(templateId, csvId) {
+    return new Promise((resolve, reject) => {
+        db.query(
+            `UPDATE templates SET csv_id = ? WHERE id = ?`,
+            [csvId, templateId],
+            (err, results) => {
+                if (err) return reject(err);
+                resolve(results.affectedRows > 0);
+            }
+        );
+    });
+}
+
 module.exports = {
     getAllByUser,
     getOne,
     createTemplate,
     updateTemplate,
-    deleteTemplate
+    deleteTemplate,
+    assignCsvToTemplate,
 };

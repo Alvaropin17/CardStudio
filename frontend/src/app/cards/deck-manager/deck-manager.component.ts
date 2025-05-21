@@ -46,6 +46,10 @@ export class DeckManagerComponent {
     this.selectedTemplate = template;
   }
 
+  onSelectCsv(csv: any): void {
+    this.selectedCsv = csv;
+  }
+
   deleteTemplate(templateId: number): void {
     this.templateService.deleteTemplate(this.user.id, templateId).subscribe({
       next: () => {
@@ -65,6 +69,10 @@ export class DeckManagerComponent {
       },
       error: (err) => console.error('Error deleting CSV:', err)
     });
+  }
+
+  assingCsvToTemplate(templateId: number): void {
+  
   }
 
 

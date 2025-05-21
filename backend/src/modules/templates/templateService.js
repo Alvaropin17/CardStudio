@@ -27,7 +27,7 @@ async function updateTemplate(body, id, userId) {
     id,
     userId,
     body.name || existing.name,
-    body.csv_id ?? existing.csv_id,
+    null,
     body.canvas_json || existing.canvas_json
   );
 
@@ -38,10 +38,18 @@ async function deleteTemplate(id, userId) {
   return await templateRepository.deleteTemplate(id, userId);
 }
 
+//------------------------------Custom Functions------------------------------//
+
+async function assignCsvToTemplate(templateId, csvId) {
+  console.log('Assigning CSV to template:', templateId, csvId);
+  return await templateRepository.assignCsvToTemplate(templateId, csvId);
+}
+
 module.exports = {
   getAllTemplatesByUser,
   getTemplateById,
   createTemplate,
   updateTemplate,
   deleteTemplate,
+  assignCsvToTemplate,
 };
