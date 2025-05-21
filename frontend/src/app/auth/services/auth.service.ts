@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, throwError, map } from 'rxjs';
+import { Observable, catchError, throwError, map, tap } from 'rxjs';
 import { LoginResponse } from '../models/login-response';
 import { RegisterResponse } from '../models/register-response';
 import { User } from '../../models/user';
@@ -12,7 +12,7 @@ export class AuthService {
 
   private baseUrl = 'http://localhost:3000/api/auth';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(user: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, { user, password }, {
@@ -32,17 +32,21 @@ export class AuthService {
     );
   }
 
-  // TO DO: NEEDS TO BE IMPLEMENTED IN BACKEND
   logout(): Observable<any> {
-    return this.http.post(`${this.baseUrl}/logout`, {}, {
-      withCredentials: true
-    }).pipe(
-      catchError(this.handleError)
+    return this.http.post('/api/logout', {}).pipe(
+      tap(() => {
+        localStorage.removeItem('user');
+      }),
+      catchError(error => {
+        localStorage.clear(); // Limpiar igualmente
+        return throwError(error);
+      })
     );
   }
 
-  register(user: string, password: string, email: string): Observable<any> {  
-    return this.http.post<RegisterResponse>(`${this.baseUrl}/register`, { user, password, email 
+  register(user: string, password: string, email: string): Observable<any> {
+    return this.http.post<RegisterResponse>(`${this.baseUrl}/register`, {
+      user, password, email
     }).pipe(
       catchError(this.handleError)
     );

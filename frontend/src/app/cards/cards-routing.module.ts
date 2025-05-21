@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { EditorComponent } from './editor/editor.component';
 import { CsvLoaderComponent } from './csv-loader/csv-loader.component';
+import { DeckManagerComponent } from './deck-manager/deck-manager.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,10 @@ const routes: Routes = [
   {
     path: 'csv/:id', // Para ver un CSV existente (si lo implementas)
     component: CsvLoaderComponent
+  },
+  {
+    path: 'manager',
+    component: DeckManagerComponent
   }
 ];
 

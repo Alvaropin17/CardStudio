@@ -7,7 +7,7 @@ const csvService = require('./csvService');
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/',  getAllDatasets);
+router.get('/', verifyToken, checkUserPermission, getAllDatasets);
 router.get('/:id', verifyToken, checkUserPermission, getDatasetById);
 router.post('/', verifyToken, checkUserPermission, createDataset);
 router.delete('/:id', verifyToken, checkUserPermission, deleteDataset);

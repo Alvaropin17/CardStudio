@@ -8,13 +8,14 @@ const User = require('../../database/models/user');
 const router = Express.Router();
 
 router.post('/login', login);
+router.post('/logout', logout);
 router.post('/register', register);
 
 async function login(req, res) {
     const body = req.body;
 
     if (!body) {
-        return answer.error(req, res, "Datos inválidos", 400);
+        return answer.error(req, res, "Invalid data", 400);
     }
 
     try {
@@ -28,7 +29,17 @@ async function login(req, res) {
         answer.success(req, res, loginAnswer.user, 200);
     } catch (error) {
         console.error("Error:", error); 
-        return answer.error(req, res, "Error en el servidor", 500);
+        return answer.error(req, res, "Server error", 500);
+    }
+}
+
+async function logout(req, res) {
+    try {
+        res.clearCookie('token');
+        answer.success(req, res, "Logged out", 200);
+    } catch (error) {
+        console.error("Error:", error); 
+        return answer.error(req, res, "Server error", 500);
     }
 }
 
@@ -36,7 +47,7 @@ async function register(req, res) {
     const body = req.body;
 
     if (!body) {
-        return answer.error(req, res, "Datos inválidos", 400);
+        return answer.error(req, res, "Invalid data", 400);
     }
 
     try {
@@ -45,7 +56,7 @@ async function register(req, res) {
         answer.success(req, res, registerAnswer.user, 201);
     } catch (error) {
         console.error("Error:", error); 
-        return answer.error(req, res, "Error en el servidor", 500);
+        return answer.error(req, res, "Server error", 500);
     }
     
 }
