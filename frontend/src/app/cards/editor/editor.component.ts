@@ -21,7 +21,7 @@ import { CustomTextbox } from '../fabric/CustomTextbox';
 })
 export class EditorComponent implements AfterViewInit {
 
-  
+
 
   constructor(
 
@@ -39,6 +39,7 @@ export class EditorComponent implements AfterViewInit {
   activeObject: fabric.Object | null = null;
 
   importedJson: string = '';
+  importedJsonId: string | null = '';
 
   elementCounter: number = 1;
 
@@ -68,11 +69,11 @@ export class EditorComponent implements AfterViewInit {
 
   ngOnInit(): void {
 
-    const id = this.route.snapshot.paramMap.get('id');
+    this.importedJsonId = this.route.snapshot.paramMap.get('id');
     const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-    if (id && user?.id) {
-      this.templateService.getTemplateById(user.id, +id).subscribe({
+    if (this.importedJsonId && user?.id) {
+      this.templateService.getTemplateById(user.id, +this.importedJsonId).subscribe({
         next: (templateResponse) => {
 
           this.importedJson = templateResponse.body.canvas_json;
@@ -421,16 +422,29 @@ export class EditorComponent implements AfterViewInit {
     this.templateToSave.name = this.templateName;
     this.templateToSave.user_id = userId;
 
-    this.templateService.createTemplate(userId, this.templateToSave).subscribe({
-      next: (res) => {
-        console.log('Plantilla guardada correctamente:', res);
-        alert('Plantilla guardada con éxito ✅');
-      }
-      , error: (err) => {
-        console.error('Error al guardar plantilla:', err);
-        alert('Error al guardar la plantilla ❌');
-      }
-    });
+    if (this.importedJson && this.importedJsonId !== null) {
+      this.templateService.updateTemplate(userId, +this.importedJsonId, this.templateToSave).subscribe({
+        next: (res) => {
+          console.log('Plantilla actualizada correctamente:', res);
+          alert('Plantilla actualizada con éxito ✅');
+        },
+        error: (err) => {
+          console.error('Error al actualizar plantilla:', err);
+          alert('Error al actualizar la plantilla ❌');
+        }
+      });
+    } else {
+      this.templateService.createTemplate(userId, this.templateToSave).subscribe({
+        next: (res) => {
+          console.log('Plantilla guardada correctamente:', res);
+          alert('Plantilla guardada con éxito ✅');
+        }
+        , error: (err) => {
+          console.error('Error al guardar plantilla:', err);
+          alert('Error al guardar la plantilla ❌');
+        }
+      });
+    }
 
     this.templateToSave = null;
 
@@ -484,7 +498,7 @@ export class EditorComponent implements AfterViewInit {
             });
           });
         }, 100);
-      }) ;
+      });
     } catch (error) {
       console.error('Error al cargar el JSON:', error);
     }
