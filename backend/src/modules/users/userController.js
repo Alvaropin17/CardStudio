@@ -28,13 +28,13 @@ async function getUserById(req, res) {
         let singleUser = await userService.getUserById(req.params.userId);
         
         if (!singleUser) {
-            return answer.error(req, res, "Usuario no encontrado", 404);
+            return answer.error(req, res, "User not found", 404);
         }
 
         return answer.success(req, res, singleUser, 200);
     } catch (error) {
         console.error("Error:", error);
-        return answer.error(req, res, "Error en el servidor", 500);
+        return answer.error(req, res, "Server error", 500);
     }
 }
 
@@ -42,14 +42,14 @@ async function createUser(req, res) {
     const body = req.body;
 
     if (!body) {
-        return answer.error(req, res, "Datos inválidos", 400);
+        return answer.error(req, res, "Invalid data", 400);
     }
 
     try {
         let newUser = await userService.createUser(body);
         answer.success(req, res, newUser, 200);
     } catch (error) {
-        answer.error(req, res, "Error en el servidor", 500);
+        answer.error(req, res, "server error", 500);
     }
 }
 
@@ -59,14 +59,14 @@ async function updateUser(req, res) {
     const userId = req.params.userId;
 
     if (!body || !userId) {
-        return answer.error(req, res, "Datos inválidos", 400);
+        return answer.error(req, res, "Invalid data", 400);
     }
 
     try {
         let result = await userService.updateUser(userId, body);
         answer.success(req, res, result, 200);
     } catch (error) {
-        answer.error(req, res, "Error en el servidor", 500);
+        answer.error(req, res, "Server error", 500);
     }
 }
 
@@ -76,13 +76,13 @@ async function deleteUser(req, res) {
         let deletedUser = await userService.deleteUser(req.params.userId);
         
         if (!deletedUser) {
-            return answer.error(req, res, "Usuario no encontrado", 404);
+            return answer.error(req, res, "User not found", 404);
         }
 
-        return answer.success(req, res, "Usuario eliminado correctamente", 200);
+        return answer.success(req, res, "User deleted successfully", 200);
     } catch (error) {
         console.error("Error al eliminar usuario:", error);
-        return answer.error(req, res, "Error en el servidor", 500);
+        return answer.error(req, res, "Server error", 500);
     }
 }
 

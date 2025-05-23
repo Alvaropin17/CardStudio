@@ -14,14 +14,14 @@ async function login(body) {
     const userData = await userService.getUserByName(username);
 
     if (!userData) {
-        throw { status: 401, message: 'Usuario no encontrado' };
+        throw { status: 404, message: 'User not found' };
     }
 
     const user = new User(userData.id, userData.name, userData.password, userData.email);
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        throw { status: 401, message: 'Contraseña incorrecta' };
+        throw { status: 401, message: 'Invalid Password' };
     }
 
     const payload = {
@@ -59,7 +59,7 @@ function checkUserPermission(req, res, next) {
     const userIdFromParams = parseInt(req.params.userId);
 
     if (userIdFromToken !== userIdFromParams) {
-        return answer.error(req, res, 'No tienes permisos para esta acción', 403);
+        return answer.error(req, res, 'Unauthorized', 401);
     }
 
     next();
@@ -73,21 +73,21 @@ async function register(body) {
     const email = body.email;
 
     if (!username || !password || !email) {
-        throw { status: 400, message: 'Faltan campos obligatorios' };
+        throw { status: 400, message: 'Missing mandatory fields' };
     }
 
     if (password.length < 8) {
-        throw { status: 400, message: 'La contraseña debe tener al menos 8 caracteres' };
+        throw { status: 400, message: 'Password too short' };
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        throw { status: 400, message: 'El email no tiene un formato válido' };
+        throw { status: 400, message: 'Invalid email format' };
     }
 
     const existingUser = await userService.getUserByName(username);
     if (existingUser) {
-        throw { status: 409, message: 'El nombre de usuario ya existe' };
+        throw { status: 409, message: 'Username already exists' };
     }
 
     const newUser = new User(null, username, password, email);

@@ -14,9 +14,10 @@
                         <button class="btn-link btn-link--delete" (click)="assingCsvToTemplate()">
                             Asignar CSV
                         </button>
-                        <a class="btn-link btn-link--edit" [routerLink]="['/cards/editor', template.id]">
+                        <button class="btn-link btn-link--delete" [routerLink]="['/cards/editor', template.id]">
                             Editar
-                        </a>
+                        </button>
+                        <button class="btn-link btn-link--delete" [routerLink]="['/cards/generate-deck', template.id]">Generar</button>
                         <button class="btn-link btn-link--delete" (click)="deleteTemplate(template.id)">
                             Eliminar
                         </button>
@@ -32,7 +33,7 @@
                     *ngFor="let csv of csvDatasets" [class.selected]="csv.id === selectedCsv?.id"
                     (click)="onSelectCsv(csv)">
                     {{ csv.name }}
-                    <div class="action-buttons"  *ngIf="csv.id === selectedCsv?.id">
+                    <div class="action-buttons" *ngIf="csv.id === selectedCsv?.id">
                         <a class="btn-link btn-link--edit" [routerLink]="['/cards/csv', csv.id]">
                             Editar
                         </a>

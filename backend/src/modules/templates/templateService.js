@@ -41,7 +41,6 @@ async function deleteTemplate(id, userId) {
 //------------------------------Custom Functions------------------------------//
 
 async function assignCsvToTemplate(templateId, csvId) {
-  console.log('Assigning CSV to template:', templateId, csvId);
   return await templateRepository.assignCsvToTemplate(templateId, csvId);
 }
 

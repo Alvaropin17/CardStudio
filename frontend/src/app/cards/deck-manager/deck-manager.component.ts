@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TemplateService } from '../../services/template.service';
 import { CsvDataService } from '../../services/csv-data.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-deck-manager',
@@ -17,7 +18,9 @@ export class DeckManagerComponent {
   selectedTemplate: any = null;
   selectedCsv: any = null;
 
-  constructor(private templateService: TemplateService, private csvService: CsvDataService) { }
+  generateDeck: boolean = false;
+
+  constructor(private templateService: TemplateService, private csvService: CsvDataService, private router: Router) { }
 
   ngOnInit(): void {
     const userData = localStorage.getItem('user');
@@ -85,8 +88,7 @@ export class DeckManagerComponent {
     } else {
       alert('Please select a CSV to assign.');
     }
-  
-  }
 
+  }
 
 }

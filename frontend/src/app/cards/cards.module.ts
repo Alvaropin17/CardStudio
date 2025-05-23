@@ -5,12 +5,14 @@ import { EditorComponent } from './editor/editor.component';
 import { FormsModule } from '@angular/forms';
 import { CsvLoaderComponent } from './csv-loader/csv-loader.component';
 import { DeckManagerComponent } from './deck-manager/deck-manager.component';
+import { DeckGeneratorComponent } from './deck-generator/deck-generator.component';
 
 @NgModule({
   declarations: [
     EditorComponent,
     CsvLoaderComponent,
-    DeckManagerComponent
+    DeckManagerComponent,
+    DeckGeneratorComponent  
   ],
   imports: [
     CommonModule,

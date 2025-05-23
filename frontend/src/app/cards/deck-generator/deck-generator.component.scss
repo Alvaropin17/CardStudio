@@ -1,0 +1,29 @@
+/* deck-generator.component.scss */
+.generator-container {
+  padding: 20px;
+}
+
+.preview-section {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.preview-image {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #eee;
+  margin: 10px 0;
+}
+
+.previe-actions {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.loading, .error {
+  padding: 20px;
+  text-align: center;
+}

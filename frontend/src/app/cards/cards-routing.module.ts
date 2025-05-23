@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { EditorComponent } from './editor/editor.component';
 import { CsvLoaderComponent } from './csv-loader/csv-loader.component';
 import { DeckManagerComponent } from './deck-manager/deck-manager.component';
+import { DeckGeneratorComponent } from './deck-generator/deck-generator.component';
 
 const routes: Routes = [
   {
@@ -10,7 +11,7 @@ const routes: Routes = [
     component: EditorComponent
   },
   {
-    path: 'editor/:id', // Para cargar un template existente
+    path: 'editor/:id',
     component: EditorComponent
   },
   {
@@ -18,13 +19,17 @@ const routes: Routes = [
     component: CsvLoaderComponent
   },
   {
-    path: 'csv/:id', // Para ver un CSV existente (si lo implementas)
+    path: 'csv/:id', 
     component: CsvLoaderComponent
   },
   {
     path: 'manager',
     component: DeckManagerComponent
-  }
+  },
+  {
+    path: 'generate-deck/:templateId',
+    component: DeckGeneratorComponent 
+  },
 ];
 
 @NgModule({

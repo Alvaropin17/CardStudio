@@ -453,17 +453,14 @@ export class EditorComponent implements AfterViewInit {
   loadCanvasFromJson(): void {
     if (this.canvas && this.importedJson) {
       this.canvas.loadFromJSON(this.importedJson, () => {
-        this.canvas.renderAll(); // fuerza un render completo
+        this.canvas.renderAll(); 
 
-        // Hacemos una pequeña pausa para asegurarnos que todo está listo
         setTimeout(() => {
           this.canvas.requestRenderAll();
-          // Limpiamos la lista anterior
           this.canvasObjectsList = [];
-          // Recorremos todos los objetos del canvas y los agregamos a la lista
           this.canvas.getObjects().forEach((obj: any) => {
-            const id = obj.id || uuidv4(); // Si no hay id, generamos uno nuevo
-            obj.set({ id }); // Nos aseguramos de que todos tengan id
+            const id = obj.id || uuidv4(); 
+            obj.set({ id }); 
 
             this.canvasObjectsList.unshift({
               id,
