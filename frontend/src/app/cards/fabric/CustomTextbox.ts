@@ -5,7 +5,7 @@ import { classRegistry } from 'fabric';
 export class CustomTextbox extends fabric.Textbox {
   name: string = '';
   id: string = '';
-    override get type(): string {
+  override get type(): string {
     return 'custom-textbox';
   }
 
@@ -16,6 +16,8 @@ export class CustomTextbox extends fabric.Textbox {
       ...super.toObject([...(propertiesToInclude || []), 'name', 'id'] as K[]),
       name: this.name,
       id: this.id,
+      type: 'custom-textbox'
+
     };
   }
 
@@ -26,8 +28,6 @@ export class CustomTextbox extends fabric.Textbox {
       this.id = options.id || 0;
     }
   }
-
-  
 }
 
 classRegistry.setClass(CustomTextbox, 'custom-textbox');

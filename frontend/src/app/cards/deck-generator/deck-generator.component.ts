@@ -35,23 +35,27 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   ) { }
 
   async ngOnInit(): Promise<void> {
-    this.templateId = +this.route.snapshot.params['templateId'];
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      this.user = JSON.parse(userData);
-    } else {
-      alert('Usuario no logueado');
-      this.router.navigate(['/auth/login']);
-    }
-    this.getTemplateAndCsvData();
-  }
+    try {
+      this.templateId = +this.route.snapshot.params['templateId'];
+      const userData = localStorage.getItem('user');
+      if (!userData) {
+        alert('Usuario no logueado');
+        this.router.navigate(['/auth/login']);
+        return;
+      }
 
+      this.user = JSON.parse(userData);
+      await this.getTemplateAndCsvData(); // Espera aquí
+      await this.initGenerationFlow(); // Luego inicia la generación
+    } catch (error) {
+      console.error('Error en ngOnInit:', error);
+    }
+  }
   async initGenerationFlow(): Promise<void> {
     try {
 
       // 2. Inicializar canvas
       this.initCanvas();
-      await this.loadCanvasTemplate();
 
       // 3. Generar cartas
       await this.generateAllCards();
@@ -73,30 +77,37 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   }
 
   private async loadCanvasTemplate(): Promise<void> {
-    this.canvas.loadFromJSON(this.template.canvas_json, () => {
-      setTimeout(() => {
-        this.canvas.renderAll();
-      }, 100);
+    return new Promise((resolve) => {
+      this.canvas.loadFromJSON(this.template.canvas_json, () => {
+        this.canvas.requestRenderAll();
+        // Espera un frame de animación para asegurar el renderizado
+        requestAnimationFrame(() => resolve());
+      });
     });
   }
 
 
   private async generateAllCards(): Promise<void> {
     for (const row of this.csvDataset.data) {
+      await this.loadCanvasTemplate();
       this.replaceMarkers(row);
-      await this.saveCurrentCard(this.template.id!, row);
+      await this.saveCurrentCard();
       this.resetCanvas();
     }
   }
 
   private replaceMarkers(rowData: Record<string, string>): void {
+
     this.canvas.getObjects().forEach((obj) => {
-      if ((obj.type === 'text' || obj.type === 'custom-text')) {
+      if ((obj.type === 'text' || obj.type === 'custom-textbox')) {
         const textObj = obj as CustomTextbox;
+        console.log('Reemplazando texto para:', textObj);
 
         const matchingHeader = this.csvDataset?.headers.find(
           header => header.toLowerCase() === textObj.name.toLowerCase().trim()
         );
+
+        console.log('Encabezado coincidente:', matchingHeader);
 
         // 2. Si encontramos coincidencia, usar el valor correspondiente
         if (matchingHeader && rowData[matchingHeader]) {
@@ -105,77 +116,79 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
 
       }
     });
-    this.canvas.renderAll();
+    this.canvas.requestRenderAll();
   }
 
-  private async saveCurrentCard(templateId: number, rowData: any): Promise<void> {
+  private async saveCurrentCard(): Promise<void> {
+    // Asegura un último renderizado
+    this.canvas.requestRenderAll();
+
+    // Espera un frame de animación
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
     const imageData = this.canvas.toDataURL({
       format: 'png',
       quality: 0.8,
       multiplier: 1
     });
 
-    // Console.log básico
-    console.log('DataURL completo:', imageData);
+    // Debug mejorado
+    this.debugImageData(imageData);
+  }
 
-    // Versión más informativa
-    console.group('Canvas Image Data');
-    console.log('Tipo:', imageData.substring(0, 30) + '...'); // Muestra el inicio
-    console.log('Longitud:', imageData.length, 'caracteres');
-    console.log('Tamaño aproximado:', Math.round(imageData.length * 0.75), 'bytes (base64 -> binario)');
-    console.groupEnd();
+  private debugImageData(imageData: string): void {
+    const img = new Image();
+    img.src = imageData;
+    img.onload = () => {
+      console.log('Dimensiones reales de la imagen:', img.width, 'x', img.height);
+      document.body.appendChild(img); // Muestra la imagen en pantalla para debug
+    };
 
-    // Para inspeccionar en navegador (crea un enlace descargable)
-    console.log('%cPreview:', 'font-weight:bold');
-    console.log('Puedes pegar este DataURL en la barra de direcciones para previsualizar:');
-    console.log(imageData);
-
-    // Opcional: Crear un enlace descargable en la consola
-
+    console.log('Datos de imagen:', {
+      preview: imageData.substring(0, 50) + '...',
+      sizeBytes: Math.round(imageData.length * 0.75)
+    });
   }
 
   private resetCanvas(): void {
     this.canvas.clear();
-    this.canvas.loadFromJSON(this.template.canvas_json);
   }
 
-private async getTemplateAndCsvData(): Promise<void> {
-  try {
-    // 1. Obtener template
-    const templateResponse = await this.templateService.getTemplateById(
-      this.user.id, 
-      this.templateId
-    ).toPromise();
+  private async getTemplateAndCsvData(): Promise<void> {
+    try {
+      const templateResponse = await this.templateService.getTemplateById(
+        this.user.id,
+        this.templateId
+      ).toPromise();
 
-    if (!templateResponse?.body) {
-      throw new Error('No se pudo obtener el template');
+      if (!templateResponse?.body) {
+        throw new Error('No se pudo obtener el template');
+      }
+
+      this.template = templateResponse.body;
+
+      if (!this.template.csv_id) {
+        throw new Error('El template no tiene CSV asociado');
+      }
+
+      const csvResponse = await this.csvService.getCsvById(
+        this.user.id,
+        this.template.csv_id
+      ).toPromise();
+
+      if (!csvResponse?.body) {
+        throw new Error('No se pudo obtener el CSV');
+      }
+
+      this.csvDataset = csvResponse.body;
+
+    } catch (error) {
+      console.error('Error en getTemplateAndCsvData:', error);
+      alert(error instanceof Error ? error.message : 'Error desconocido');
+      this.router.navigate(['/cards/manager']);
+      throw error;
     }
-
-    this.template = templateResponse.body;
-
-    if (!this.template.csv_id) {
-      throw new Error('El template no tiene CSV asociado');
-    }
-
-    // 3. Obtener CSV
-    const csvResponse = await this.csvService.getCsvById(
-      this.user.id, 
-      this.template.csv_id
-    ).toPromise();
-
-    if (!csvResponse?.body) {
-      throw new Error('No se pudo obtener el CSV');
-    }
-
-    this.csvDataset = csvResponse.body;
-
-  } catch (error) {
-    console.error('Error en getTemplateAndCsvData:', error);
-    alert(error instanceof Error ? error.message : 'Error desconocido');
-    this.router.navigate(['/cards/manager']);
-    throw error; // Re-lanzamos para manejo adicional si es necesario
   }
-}
 
   ngOnDestroy(): void {
     if (this.canvas) {

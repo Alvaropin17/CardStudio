@@ -289,7 +289,6 @@ export class EditorComponent implements AfterViewInit {
 
       const objectIndex = this.canvasObjectsList.findIndex(obj => obj.fabricObject === this.activeObject);
       if (objectIndex !== -1) {
-        console.log('Objeto eliminado:', objectIndex);
         this.canvasObjectsList.splice(objectIndex, 1);
       }
 
@@ -450,26 +449,27 @@ export class EditorComponent implements AfterViewInit {
 
   }
 
-  loadCanvasFromJson(): void {
+  async loadCanvasFromJson(): Promise<void> {
     if (this.canvas && this.importedJson) {
-      this.canvas.loadFromJSON(this.importedJson, () => {
-        this.canvas.renderAll(); 
+      this.canvas.loadFromJSON(this.importedJson, async () => {
 
-        setTimeout(() => {
-          this.canvas.requestRenderAll();
-          this.canvasObjectsList = [];
-          this.canvas.getObjects().forEach((obj: any) => {
-            const id = obj.id || uuidv4(); 
-            obj.set({ id }); 
+        this.canvas.requestRenderAll();
+        await new Promise(resolve => requestAnimationFrame(resolve));
 
-            this.canvasObjectsList.unshift({
-              id,
-              name: obj.name || 'Sin nombre',
-              type: obj.type,
-              fabricObject: obj
-            });
+        this.canvasObjectsList = [];
+        this.canvas.getObjects().forEach((obj: any) => {
+          const id = obj.id || uuidv4();
+          obj.set({ id });
+
+          this.canvasObjectsList.unshift({
+            id,
+            name: obj.name || 'Sin nombre',
+            type: obj.type,
+            fabricObject: obj
           });
-        }, 100);
+        });
+
+
       });
     }
   }

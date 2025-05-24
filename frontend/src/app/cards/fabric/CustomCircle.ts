@@ -20,7 +20,6 @@ export class CustomCircle extends fabric.Circle {
         };
     }
 
-
     constructor(options?: any) {
         super(options);
         if (options) {
@@ -28,7 +27,6 @@ export class CustomCircle extends fabric.Circle {
             this.id = options.id || 0;
         }
     }
-
 }
 
 classRegistry.setClass(CustomCircle, 'custom-circle');

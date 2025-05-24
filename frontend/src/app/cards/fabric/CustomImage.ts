@@ -16,6 +16,7 @@ export class CustomImage extends fabric.FabricImage {
             ...super.toObject([...(propertiesToInclude || []), 'name', 'id'] as K[]),
             name: this.name,
             id: this.id,
+            type: 'custom-image'
         };
     }
 
@@ -25,10 +26,7 @@ export class CustomImage extends fabric.FabricImage {
             this.name = options.name || '';
             this.id = options.id || 0;
         }
-    }
-
-
-    
+    }   
 }
 
 classRegistry.setClass(CustomImage, 'custom-image');

@@ -17,6 +17,8 @@ export class CustomRect extends fabric.Rect {
             ...super.toObject([...(propertiesToInclude || []), 'name', 'id'] as K[]),
             name: this.name,
             id: this.id,
+            type: 'custom-rect'
+
         };
     }
 
@@ -27,9 +29,7 @@ export class CustomRect extends fabric.Rect {
             this.id = options.id || 0;
         }
     }
-
-    
 }
 
-classRegistry.setClass(CustomRect);
+classRegistry.setClass(CustomRect, 'custom-rect');
 
