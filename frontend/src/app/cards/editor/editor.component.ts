@@ -474,33 +474,6 @@ export class EditorComponent implements AfterViewInit {
     }
   }
 
-  importCanvasFromJsonString(jsonString: string) {
-    try {
-
-      this.canvas.loadFromJSON(jsonString, () => {
-        this.canvas.renderAll();
-
-        setTimeout(() => {
-          this.canvas.requestRenderAll();
-          this.canvasObjectsList = [];
-          this.canvas.getObjects().forEach((obj: any) => {
-            const id = obj.id || uuidv4();
-            obj.set({ id });
-
-            this.canvasObjectsList.unshift({
-              id,
-              name: obj.name || 'Sin nombre',
-              type: obj.type,
-              fabricObject: obj
-            });
-          });
-        }, 100);
-      });
-    } catch (error) {
-      console.error('Error al cargar el JSON:', error);
-    }
-  }
-
   /*
       // Ejemplo: descargar el JSON como archivo
       const blob = new Blob([jsonString], { type: 'application/json' });
