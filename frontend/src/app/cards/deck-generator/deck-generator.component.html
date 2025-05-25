@@ -1,0 +1,10 @@
+<div>
+    <div class="genera-button" *ngIf="isLoading === false">
+        <button (click)="generateDeck()">Generar mazo</button>
+    </div>
+    <div class="folder-upload">
+        <button (click)="triggerFolderInput()">Seleccionar Carpeta</button>
+        <input #folderInput type="file" webkitdirectory directory multiple accept="image/*"
+            (change)="handleFolderSelection($event)" style="display: none;">
+    </div>
+</div>

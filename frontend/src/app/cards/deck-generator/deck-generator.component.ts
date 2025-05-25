@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TemplateService } from '../../services/template.service';
 import { CsvDataService } from '../../services/csv-data.service';
@@ -8,6 +8,7 @@ import { CsvDataset } from '../../models/csv-dataset';
 import { Template } from '../../models/template';
 
 import { CustomTextbox } from '../fabric/CustomTextbox';
+import { CustomImage } from '../fabric/CustomImage';
 
 
 
@@ -19,13 +20,18 @@ import { CustomTextbox } from '../fabric/CustomTextbox';
 })
 export class DeckGeneratorComponent implements OnInit, OnDestroy {
 
+  @ViewChild('folderInput') folderInput!: ElementRef<HTMLInputElement>;
+
+
   user: any;
   template!: Template;
   csvDataset!: CsvDataset;
+  imageRepository = new Map<string, File>();
+
 
   private canvas!: fabric.Canvas;
   private templateId!: number;
-  isLoading = true;
+  isLoading = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,6 +39,10 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
     private templateService: TemplateService,
     private csvService: CsvDataService
   ) { }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   async ngOnInit(): Promise<void> {
     try {
@@ -43,30 +53,28 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
         this.router.navigate(['/auth/login']);
         return;
       }
-
       this.user = JSON.parse(userData);
-      await this.getTemplateAndCsvData(); // Espera aquí
-      await this.initGenerationFlow(); // Luego inicia la generación
+      await this.getTemplateAndCsvData();
+
     } catch (error) {
       console.error('Error en ngOnInit:', error);
     }
   }
-  async initGenerationFlow(): Promise<void> {
+
+  async generateDeck(): Promise<void> {
     try {
-
-      // 2. Inicializar canvas
+      this.isLoading = true;
       this.initCanvas();
-
-      // 3. Generar cartas
       await this.generateAllCards();
 
-      alert('Cartas generadas con éxito');
     } catch (error) {
       console.error('Error:', error);
-    } finally {
-      this.isLoading = false;
     }
+    alert('Cartas generadas con éxito');
+    this.isLoading = false;
+
   }
+
 
   private initCanvas(): void {
     this.canvas = new fabric.Canvas('generation-canvas', {
@@ -90,37 +98,40 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   private async generateAllCards(): Promise<void> {
     for (const row of this.csvDataset.data) {
       await this.loadCanvasTemplate();
-      this.replaceMarkers(row);
+      await this.delay(100);
+      await this.replaceMarkers(row);
+      await this.delay(100);
+      await this.replaceImageMarkers(row);
+      await this.delay(100);
       await this.saveCurrentCard();
       this.resetCanvas();
+
     }
   }
 
-  private replaceMarkers(rowData: Record<string, string>): void {
 
-    this.canvas.getObjects().forEach((obj) => {
-      if ((obj.type === 'text' || obj.type === 'custom-textbox')) {
-        const textObj = obj as CustomTextbox;
-        console.log('Reemplazando texto para:', textObj);
 
-        const matchingHeader = this.csvDataset?.headers.find(
-          header => header.toLowerCase() === textObj.name.toLowerCase().trim()
-        );
+  private async replaceMarkers(rowData: Record<string, string>): Promise<void> {
 
-        console.log('Encabezado coincidente:', matchingHeader);
+    const textboxObjects = this.canvas.getObjects().filter(obj =>
+      obj.type === 'text' || obj.type === 'custom-textbox') as CustomTextbox[];
 
-        // 2. Si encontramos coincidencia, usar el valor correspondiente
-        if (matchingHeader && rowData[matchingHeader]) {
-          textObj.set('text', rowData[matchingHeader]);
-        }
+    for (const textObj of textboxObjects) {
+      const matchingHeader = this.csvDataset?.headers.find(
+        header => header.toLowerCase() === textObj.name.toLowerCase().trim()
+      );
 
+      if (matchingHeader && rowData[matchingHeader]) {
+        textObj.set('text', rowData[matchingHeader]);
       }
-    });
+
+    }
     this.canvas.requestRenderAll();
   }
 
+
   private async saveCurrentCard(): Promise<void> {
-    // Asegura un último renderizado
+    
     this.canvas.requestRenderAll();
 
     // Espera un frame de animación
@@ -152,6 +163,7 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
 
   private resetCanvas(): void {
     this.canvas.clear();
+    this.canvas.requestRenderAll();
   }
 
   private async getTemplateAndCsvData(): Promise<void> {
@@ -193,6 +205,131 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.canvas) {
       this.canvas.dispose();
+    }
+  }
+
+
+  //--------------------Images--------------------
+
+  triggerFolderInput() {
+    this.folderInput.nativeElement.click();
+  }
+
+  async handleFolderSelection(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+
+    if (!files || files.length === 0) return;
+
+    this.imageRepository.clear();
+
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.type.startsWith('image/')) {
+        const fileNameWithoutExt = file.name.split('.').slice(0, -1).join('.');
+        this.imageRepository.set(fileNameWithoutExt.toLowerCase(), file);
+      }
+    }
+    alert(`Se cargaron ${this.imageRepository.size} imágenes`);
+
+  }
+
+  private async replaceImageMarkers(rowData: Record<string, string>): Promise<void> {
+    const imageObjects = this.canvas.getObjects().filter(obj =>
+      obj.type === 'image' || obj.type === 'custom-image') as CustomImage[];
+      
+    for (const imgObj of imageObjects) {
+      const matchingHeader = this.csvDataset?.headers.find(
+        header => header.toLowerCase() === imgObj.name?.toLowerCase().trim()
+      );
+
+      if (matchingHeader && rowData[matchingHeader]) {
+        const imageNameInCsv = rowData[matchingHeader].toLowerCase();
+        const imageFile = this.imageRepository.get(imageNameInCsv);
+        if (imageFile) {
+          await this.replaceCanvasImage(imgObj, imageFile);
+        }
+      }
+    }
+  }
+
+  private async replaceCanvasImage(oldImage: CustomImage, newImageFile: File): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      const imageUrl = URL.createObjectURL(newImageFile);
+
+      try {
+        
+        const newImg = await CustomImage.fromURL(imageUrl);
+
+        const originalScaledWidth = oldImage.getScaledWidth();
+        const originalScaledHeight = oldImage.getScaledHeight();
+        
+        // 2. Calcular los nuevos factores de escala
+        const scaleX = originalScaledWidth / newImg.width!;
+        const scaleY = originalScaledHeight / newImg.height!;
+
+        // Mantener las propiedades de posición y transformación
+        newImg.set({
+          left: oldImage.left,
+          top: oldImage.top,
+          scaleX: scaleX,
+          scaleY: scaleY,
+          angle: oldImage.angle,
+          originX: oldImage.originX,
+          originY: oldImage.originY,
+          name: oldImage.name,
+          id: oldImage.id,
+          selectable: false 
+        });
+
+        this.canvas.remove(oldImage);
+        this.canvas.add(newImg);
+        this.canvas.requestRenderAll();
+        resolve();
+      } catch (error) {
+        reject(error);
+      } finally {
+        URL.revokeObjectURL(imageUrl);
+      }
+    });
+  }
+
+
+
+  //--------------------------------------------------------------------
+
+  async loadImageFromFile(file: File): Promise<void> {
+    // Crear una URL temporal para el archivo
+    const imageUrl = URL.createObjectURL(file);
+
+    try {
+      const img = await fabric.FabricImage.fromURL(imageUrl);
+
+      img.set({
+        name: file.name,
+        left: Math.random() * 300,
+        top: Math.random() * 300,
+        scaleX: 0.5,
+        scaleY: 0.5,
+        angle: 0,
+        opacity: 1,
+        selectable: true,
+        hasControls: true,
+        lockScalingFlip: true,
+        cornerStyle: 'circle',
+        transparentCorners: false
+      });
+
+      // Añadir al canvas
+      this.canvas.add(img);
+      this.canvas.requestRenderAll();
+
+    } catch (error) {
+      console.error('Error al cargar la imagen:', error);
+    } finally {
+      // Liberar la URL temporal
+      URL.revokeObjectURL(imageUrl);
     }
   }
 }

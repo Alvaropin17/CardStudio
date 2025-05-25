@@ -32,8 +32,6 @@ export class EditorComponent implements AfterViewInit {
 
   @ViewChild('canvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('folderInput') folderInput!: ElementRef<HTMLInputElement>;
-
   private canvas!: fabric.Canvas;
 
   activeObject: fabric.Object | null = null;
@@ -500,57 +498,11 @@ export class EditorComponent implements AfterViewInit {
 
   //------------------------------------FOLDER INPUT------------------------------------
 
-  triggerFolderInput() {
-    this.folderInput.nativeElement.click();
-  }
 
-  async handleFolderSelection(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const files = input.files;
 
-    if (!files || files.length === 0) return;
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (file.type.startsWith('image/')) {
-        await this.loadImageFromFile(file);
-      }
-    }
-  }
 
-  async loadImageFromFile(file: File): Promise<void> {
-    // Crear una URL temporal para el archivo
-    const imageUrl = URL.createObjectURL(file);
-
-    try {
-      const img = await fabric.FabricImage.fromURL(imageUrl);
-
-      img.set({
-        name: file.name,
-        left: Math.random() * 300,
-        top: Math.random() * 300,
-        scaleX: 0.5,
-        scaleY: 0.5,
-        angle: 0,
-        opacity: 1,
-        selectable: true,
-        hasControls: true,
-        lockScalingFlip: true,
-        cornerStyle: 'circle',
-        transparentCorners: false
-      });
-
-      // Añadir al canvas
-      this.canvas.add(img);
-      this.canvas.renderAll();
-
-    } catch (error) {
-      console.error('Error al cargar la imagen:', error);
-    } finally {
-      // Liberar la URL temporal
-      URL.revokeObjectURL(imageUrl);
-    }
-  }
+ 
 
   //------------------------------------ELEMENT PROPERTIES------------------------------------
 

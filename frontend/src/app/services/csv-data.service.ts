@@ -47,7 +47,7 @@ export class CsvDataService {
     }
 
     deleteCsv(userId: number, csvDataSetId: number): Observable<void> {
-        return this.http.delete<void>(`${this.baseUrl}/${userId}/CsvDataSets/${csvDataSetId}`, {
+        return this.http.delete<void>(`${this.baseUrl}/${userId}/csv-datasets/${csvDataSetId}`, {
             withCredentials: true
         }).pipe(
             catchError(this.handleError)

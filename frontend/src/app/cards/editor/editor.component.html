@@ -44,11 +44,6 @@
       <input type="text" id="templateName" [(ngModel)]="templateName" placeholder="Ej: Plantilla Magic" />
       <button class="btn btn-primary mt-2" (click)="saveCanvas()">Procesar</button>
     </div>
-    <div class="folder-upload">
-      <button (click)="triggerFolderInput()">Seleccionar Carpeta</button>
-      <input #folderInput type="file" webkitdirectory directory multiple accept="image/*"
-        (change)="handleFolderSelection($event)" style="display: none;">
-    </div>
   </div>
 
   <canvas #canvas></canvas>
