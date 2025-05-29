@@ -88,7 +88,6 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
     return new Promise((resolve) => {
       this.canvas.loadFromJSON(this.template.canvas_json, () => {
         this.canvas.requestRenderAll();
-        // Espera un frame de animación para asegurar el renderizado
         requestAnimationFrame(() => resolve());
       });
     });
@@ -134,7 +133,6 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
     
     this.canvas.requestRenderAll();
 
-    // Espera un frame de animación
     await new Promise(resolve => requestAnimationFrame(resolve));
 
     const imageData = this.canvas.toDataURL({
@@ -143,7 +141,6 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
       multiplier: 1
     });
 
-    // Debug mejorado
     this.debugImageData(imageData);
   }
 
@@ -152,7 +149,7 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
     img.src = imageData;
     img.onload = () => {
       console.log('Dimensiones reales de la imagen:', img.width, 'x', img.height);
-      document.body.appendChild(img); // Muestra la imagen en pantalla para debug
+      document.body.appendChild(img); 
     };
 
     console.log('Datos de imagen:', {
@@ -265,11 +262,9 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
         const originalScaledWidth = oldImage.getScaledWidth();
         const originalScaledHeight = oldImage.getScaledHeight();
         
-        // 2. Calcular los nuevos factores de escala
         const scaleX = originalScaledWidth / newImg.width!;
         const scaleY = originalScaledHeight / newImg.height!;
 
-        // Mantener las propiedades de posición y transformación
         newImg.set({
           left: oldImage.left,
           top: oldImage.top,
@@ -300,7 +295,6 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   //--------------------------------------------------------------------
 
   async loadImageFromFile(file: File): Promise<void> {
-    // Crear una URL temporal para el archivo
     const imageUrl = URL.createObjectURL(file);
 
     try {
@@ -321,14 +315,12 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
         transparentCorners: false
       });
 
-      // Añadir al canvas
       this.canvas.add(img);
       this.canvas.requestRenderAll();
 
     } catch (error) {
       console.error('Error al cargar la imagen:', error);
     } finally {
-      // Liberar la URL temporal
       URL.revokeObjectURL(imageUrl);
     }
   }

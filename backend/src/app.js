@@ -1,15 +1,15 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
 const cookieParser = require('cookie-parser');
+require('./database/connections/mongoDb'); 
 
 const config = require('./config')
 
 const userController = require('./modules/users/userController')
 const loginController = require('./modules/auth/authController')
-const templateController = require('./modules/templates/templateController')
 
 
+const app = express();
 
 
 app.use(cors({

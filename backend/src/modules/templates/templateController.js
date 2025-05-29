@@ -48,7 +48,6 @@ async function createTemplate(req, res) {
         return answer.error(req, res, "Missing mandatory fields", 400);
     }
 
-
     try {
 
         const user = await userService.getUserById(userId);
@@ -73,8 +72,8 @@ async function updateTemplate(req, res) {
         if (!existing) {
             return answer.error(req, res, "Template not found", 404);
         }
-        const result = await templateService.updateTemplate(body, id, userId);
-        return answer.success(req, res, result, 200);
+        const updated = await templateService.updateTemplate(body, id, userId);
+        return answer.success(req, res, updated, 200);
     } catch (error) {
         return answer.error(req, res, "Error when updating the template", 500);
     }

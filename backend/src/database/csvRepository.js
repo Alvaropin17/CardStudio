@@ -1,4 +1,4 @@
-const db = require('./db');
+const db = require('./connections/sqlDb');
 const CsvDataSet = require('./models/csvDataSet');
 
 async function getAllByUser(userId) {

@@ -3,7 +3,7 @@
         <button (click)="generateDeck()">Generar mazo</button>
     </div>
     <div class="folder-upload">
-        <button (click)="triggerFolderInput()">Seleccionar Carpeta</button>
+        <button (click)="triggerFolderInput()">Subir carpeta de imágenes</button>
         <input #folderInput type="file" webkitdirectory directory multiple accept="image/*"
             (change)="handleFolderSelection($event)" style="display: none;">
     </div>

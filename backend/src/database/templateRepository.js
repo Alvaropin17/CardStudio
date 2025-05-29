@@ -1,4 +1,4 @@
-const db = require('./db');
+const db = require('./connections/sqlDb');
 const Template = require('./models/template');
 
 async function getAllByUser(userId) {

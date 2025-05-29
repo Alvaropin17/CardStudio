@@ -1,29 +1,117 @@
-/* deck-generator.component.scss */
-.generator-container {
-  padding: 20px;
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem;
+  color: #2d3748;
 }
 
-.preview-section {
-  margin-top: 20px;
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.preview-image {
-  max-width: 100%;
-  height: auto;
-  border: 1px solid #eee;
-  margin: 10px 0;
-}
-
-.previe-actions {
+.container {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
-  gap: 10px;
-  margin: 15px 0;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.loading, .error {
-  padding: 20px;
+.genera-button, .folder-upload {
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  background-color: #4299e1;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background-color: #3182ce;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  }
+}
+
+.folder-upload button {
+  background-color: #38a169;
+
+  &:hover {
+    background-color: #2f855a;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.5);
+  }
+}
+
+.status-message {
   text-align: center;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  font-weight: 500;
+
+  &.loading {
+    background-color: #ebf8ff;
+    color: #3182ce;
+  }
+
+  &.success {
+    background-color: #f0fff4;
+    color: #2f855a;
+  }
+
+  &.error {
+    background-color: #fff5f5;
+    color: #e53e3e;
+  }
+}
+
+.image-counter {
+  text-align: center;
+  color: white;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  :host {
+    padding: 1rem;
+  }
+
+  .container {
+    padding: 1.5rem;
+  }
+
+  button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
 }
