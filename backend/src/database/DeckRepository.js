@@ -1,11 +1,11 @@
-const { gfs } = require('../database/connections/mongoDb');
-const CardImage = require('./models/cardImage');
+const { getGridFS } = require('./connections/mongoDb');
+const Deck = require('./models/deck');
 const mongoose = require('mongoose');
 const { Readable } = require('stream');
 
 async function getAllByUser(userId) {
     try {
-        return await CardImage.find({ userId });
+        return await Deck.find({ userId });
     } catch (err) {
         throw err;
     }
@@ -13,7 +13,7 @@ async function getAllByUser(userId) {
 
 async function getOne(id, userId) {
     try {
-        return await CardImage.findOne({
+        return await Deck.findOne({
             _id: new mongoose.Types.ObjectId(id),
             userId: userId
         });
@@ -22,27 +22,30 @@ async function getOne(id, userId) {
     }
 }
 
-async function createImage(base64, name, userId) {
+async function createDeck(cards, name, userId) {
+    console.log("Creating deck with name:", name, "for userId:", userId);
+    console.log("Cards to be saved:", cards);
     try {
-        const file = await saveImageToGridFS(base64, name, userId);
-        console.log("File saved to GridFS with ID:", file._id);
-        const cardImage = new CardImage({
+        const deck = new Deck({
             name,
             userId,
-            fileId: file._id // Nuevo campo que debes agregar al modelo
+            fileIds: []
         });
-
-        await cardImage.save();
-        return cardImage;
+        for (const card of cards) {
+            const file = await saveDeckToGridFS(card.base64, userId);
+            deck.fileIds.push(file._id);
+        }
+        await deck.save();
+        return deck;
     } catch (err) {
-        console.error("Error in createImage:", err);
+        console.error("Error in createDeck:", err);
         throw err;
     }
 }
 
-async function updateImage(id, userId, updateData) {
+async function updateDeck(id, userId, updateData) {
     try {
-        const updated = await CardImage.findOneAndUpdate(
+        const updated = await Deck.findOneAndUpdate(
             { _id: id, userId },
             updateData,
             { new: true }
@@ -53,9 +56,9 @@ async function updateImage(id, userId, updateData) {
     }
 }
 
-async function deleteImage(id, userId) {
+async function deleteDeck(id, userId) {
     try {
-        const result = await CardImage.deleteOne({ _id: id, userId });
+        const result = await Deck.deleteOne({ _id: id, userId });
         return result.deletedCount > 0;
     } catch (err) {
         throw err;
@@ -64,7 +67,8 @@ async function deleteImage(id, userId) {
 
 //----------------------------Supporting functions for file storage----------------------------
 
-async function saveImageToGridFS(base64, filename, userId) {
+async function saveDeckToGridFS(base64, userId) {
+    const gfs = getGridFS();
     const buffer = Buffer.from(base64, 'base64');
     const readable = new Readable();
     readable.push(buffer);
@@ -72,7 +76,7 @@ async function saveImageToGridFS(base64, filename, userId) {
 
 
     return new Promise((resolve, reject) => {
-        const uploadStream = gfs.openUploadStream(filename, {
+        const uploadStream = gfs.openUploadStream("card", {
             metadata: { userId }
         });
 
@@ -82,7 +86,6 @@ async function saveImageToGridFS(base64, filename, userId) {
             .on('error', reject)
             .on('finish', () => resolve({
                 _id: fileId,
-                filename: filename,
                 metadata: { userId }
             }));
 
@@ -94,7 +97,7 @@ async function saveImageToGridFS(base64, filename, userId) {
 module.exports = {
     getAllByUser,
     getOne,
-    createImage,
-    updateImage,
-    deleteImage,
+    createDeck,
+    updateDeck,
+    deleteDeck,
 };

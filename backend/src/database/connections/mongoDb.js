@@ -17,4 +17,16 @@ conn.once("open", () => {
   gfs = new GridFSBucket(conn.db, { bucketName: "card_images" });
 });
 
-module.exports = { gfs };
+
+function getGridFS() {
+    if (!gfs) {
+        throw new Error("GridFS no está inicializado. Espera a que la conexión esté lista.");
+    }
+    return gfs;
+
+}
+
+module.exports = {
+    getGridFS
+};
+

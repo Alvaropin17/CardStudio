@@ -10,7 +10,7 @@ const router = Express.Router();
 
 router.use('/:userId/templates', require('../templates/templateController'));
 router.use('/:userId/csv-datasets', require('../csv/csvController'));
-router.use('/:userId/card-images', require('../cardImages/cardImageController'));
+router.use('/:userId/decks', require('../decks/DeckController'));
 
 router.get('/', getAllUsers);
 router.get('/:userId', getUserById);  
