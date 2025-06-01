@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
-import { CsvDatasetResponse } from '../models/csv-dataset-response';
+import { CsvDatasetResponse } from '../models/responses/csv-dataset-response';
 import { CsvDataset } from '../models/csv-dataset';
-import { UniqueCsvDatasetResponse } from '../models/unique-csv-dataset-response';
+import { UniqueCsvDatasetResponse } from '../models/responses/unique-csv-dataset-response';
 
 @Injectable({
     providedIn: 'root'

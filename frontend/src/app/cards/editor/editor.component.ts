@@ -6,10 +6,6 @@ import { TemplateService } from '../../services/template.service';
 import { Template } from '../../models/template';
 
 import * as fabric from 'fabric';
-import { CustomRect } from '../fabric/CustomRect';
-import { CustomCircle } from '../fabric/CustomCircle';
-import { CustomImage } from '../fabric/CustomImage';
-import { CustomTextbox } from '../fabric/CustomTextbox';
 
 
 
@@ -82,7 +78,20 @@ export class EditorComponent implements AfterViewInit {
         }
       });
     }
+    this.extendFabricSerialization();
   }
+
+  extendFabricSerialization() {
+  fabric.FabricObject.prototype.toObject = (function (toObject) {
+    return function (this: any, ...args: any[]) {
+      return {
+        ...toObject.call(this, ...args),
+        id: this.id,
+        name: this.name
+      };
+    };
+  })(fabric.Object.prototype.toObject);
+}
 
   ngAfterViewInit(): void {
 
@@ -125,7 +134,7 @@ export class EditorComponent implements AfterViewInit {
 
 
   addText() {
-    const text = new CustomTextbox('Texto nuevo', {
+    const text = new fabric.Textbox('Texto nuevo', {
       left: 50,
       top: 50,
       width: 200,
@@ -152,7 +161,7 @@ export class EditorComponent implements AfterViewInit {
   }
 
   addRectangle() {
-    const rect = new CustomRect({
+    const rect = new fabric.Rect({
       left: 100,
       top: 150,
       fill: this.selectedColor,
@@ -178,7 +187,7 @@ export class EditorComponent implements AfterViewInit {
   }
 
   addCircle() {
-    const circle = new CustomCircle({
+    const circle = new fabric.Circle({
       left: 300,
       top: 150,
       radius: 50,
@@ -186,8 +195,8 @@ export class EditorComponent implements AfterViewInit {
     });
 
     const id = uuidv4();
-    circle.set({ name: this.objectName, id });
-
+    circle.name = this.objectName;
+    circle.id = id;
     this.canvas.add(circle);
     this.canvas.setActiveObject(circle);
 
@@ -214,7 +223,7 @@ export class EditorComponent implements AfterViewInit {
       strokeWidth: 2,
       selectable: true,
       evented: true,
-      name: 'Borde',
+      name: 'Border',
     });
 
 
@@ -237,7 +246,7 @@ export class EditorComponent implements AfterViewInit {
 
   async loadImage(imagePath: string): Promise<void> {
     try {
-      const img = await CustomImage.fromURL(`images/${imagePath}`);
+      const img = await fabric.FabricImage.fromURL(`images/${imagePath}`);
 
       img.set({
         left: 100,

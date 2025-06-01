@@ -2,21 +2,22 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/co
 import { ActivatedRoute, Router } from '@angular/router';
 import { TemplateService } from '../../services/template.service';
 import { CsvDataService } from '../../services/csv-data.service';
+import { CardImagesService } from '../../services/card-images.service';
 
-import * as fabric from 'fabric';
 import { CsvDataset } from '../../models/csv-dataset';
 import { Template } from '../../models/template';
+import { CardImage } from '../../models/card-image';
 
-import { CustomTextbox } from '../fabric/CustomTextbox';
-import { CustomImage } from '../fabric/CustomImage';
+
+import * as fabric from 'fabric';
 
 
 
 @Component({
   selector: 'app-deck-generator',
+  standalone: false,
   templateUrl: './deck-generator.component.html',
   styleUrl: './deck-generator.component.scss',
-  standalone: false,
 })
 export class DeckGeneratorComponent implements OnInit, OnDestroy {
 
@@ -113,11 +114,10 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   private async replaceMarkers(rowData: Record<string, string>): Promise<void> {
 
     const textboxObjects = this.canvas.getObjects().filter(obj =>
-      obj.type === 'text' || obj.type === 'custom-textbox') as CustomTextbox[];
-
+      obj.type === 'textbox') as fabric.Textbox[];
     for (const textObj of textboxObjects) {
       const matchingHeader = this.csvDataset?.headers.find(
-        header => header.toLowerCase() === textObj.name.toLowerCase().trim()
+        header => header.toLowerCase() === textObj.name!.toLowerCase().trim()
       );
 
       if (matchingHeader && rowData[matchingHeader]) {
@@ -148,7 +148,6 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
     const img = new Image();
     img.src = imageData;
     img.onload = () => {
-      console.log('Dimensiones reales de la imagen:', img.width, 'x', img.height);
       document.body.appendChild(img); 
     };
 
@@ -234,13 +233,15 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
 
   private async replaceImageMarkers(rowData: Record<string, string>): Promise<void> {
     const imageObjects = this.canvas.getObjects().filter(obj =>
-      obj.type === 'image' || obj.type === 'custom-image') as CustomImage[];
+      obj.type === 'image') as fabric.FabricImage[];
+
+    console.log('Objetos de imagen en el canvas:', imageObjects);
       
     for (const imgObj of imageObjects) {
       const matchingHeader = this.csvDataset?.headers.find(
-        header => header.toLowerCase() === imgObj.name?.toLowerCase().trim()
+        header => header.toLowerCase() === imgObj.name!.toLowerCase().trim()
       );
-
+      console.log('Header encontrado:', matchingHeader, 'para imagen:', imgObj.name);
       if (matchingHeader && rowData[matchingHeader]) {
         const imageNameInCsv = rowData[matchingHeader].toLowerCase();
         const imageFile = this.imageRepository.get(imageNameInCsv);
@@ -251,13 +252,13 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async replaceCanvasImage(oldImage: CustomImage, newImageFile: File): Promise<void> {
+  private async replaceCanvasImage(oldImage: fabric.FabricImage, newImageFile: File): Promise<void> {
     return new Promise(async (resolve, reject) => {
       const imageUrl = URL.createObjectURL(newImageFile);
 
       try {
         
-        const newImg = await CustomImage.fromURL(imageUrl);
+        const newImg = await fabric.FabricImage.fromURL(imageUrl);
 
         const originalScaledWidth = oldImage.getScaledWidth();
         const originalScaledHeight = oldImage.getScaledHeight();

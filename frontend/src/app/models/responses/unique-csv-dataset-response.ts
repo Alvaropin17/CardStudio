@@ -1,4 +1,4 @@
-import { CsvDataset } from "./csv-dataset";
+import { CsvDataset } from "../csv-dataset";
 
 export interface UniqueCsvDatasetResponse {
     error: boolean;

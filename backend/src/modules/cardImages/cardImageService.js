@@ -10,12 +10,8 @@ async function getImageById(id, userId) {
 }
 
 async function createImage(body, userId) {
-    const image = {
-        userId,
-        name: body.name,
-        base64: body.base64
-    };
-    return await cardImageRepository.createImage(image);
+    const { name, base64 } = body;
+    return await cardImageRepository.createImage(base64, name, userId);
 }
 
 async function updateImage(body, id, userId) {

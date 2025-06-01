@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
-import { TemplatesResponse } from '../models/templates-response';
-import { UniqueTemplateResponse } from '../models/unique-template-response';
+import { TemplatesResponse } from '../models/responses/templates-response';
+import { UniqueTemplateResponse } from '../models/responses/unique-template-response';
 import { Template } from '../models/template';
 
 @Injectable({
