@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import * as Papa from 'papaparse';
 import { CsvDataset } from '../../models/csv-dataset';
-import { CsvDataService } from '../../services/csv-data.service';
+import { CsvDatasetsService } from '../../services/csv-datasets.service';
 
 
 
@@ -13,7 +13,7 @@ import { CsvDataService } from '../../services/csv-data.service';
 })
 export class CsvLoaderComponent {
 
-  constructor(private csvService: CsvDataService) { }
+  constructor(private csvService: CsvDatasetsService) { }
 
   file: File | null = null;
   headers: string[] = [];

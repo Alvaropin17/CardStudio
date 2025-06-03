@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { TemplateService } from '../../services/template.service';
-import { CsvDataService } from '../../services/csv-data.service';
+import { TemplatesService } from '../../services/templates.service';
+import { CsvDatasetsService } from '../../services/csv-datasets.service';
 import { Template } from '../../models/template';
 import { CsvDataset } from '../../models/csv-dataset';
 
@@ -15,7 +15,7 @@ export class ProfileComponent implements OnInit {
   templates: any[] = [];
   csvDatasets: any[] = [];
 
-  constructor(private templateService: TemplateService, private csvService: CsvDataService) { }
+  constructor(private templateService: TemplatesService, private csvService: CsvDatasetsService) { }
 
   ngOnInit(): void {
     const userData = localStorage.getItem('user');

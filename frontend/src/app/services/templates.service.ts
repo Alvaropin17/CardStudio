@@ -8,7 +8,7 @@ import { Template } from '../models/template';
 @Injectable({
   providedIn: 'root'
 })
-export class TemplateService {
+export class TemplatesService {
 
   private baseUrl = 'http://localhost:3000/api/users';
 

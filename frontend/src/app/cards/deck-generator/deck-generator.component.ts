@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TemplateService } from '../../services/template.service';
-import { CsvDataService } from '../../services/csv-data.service';
-import { CardImagesService } from '../../services/card-images.service';
+import { TemplatesService } from '../../services/templates.service';
+import { CsvDatasetsService } from '../../services/csv-datasets.service';
+import { DecksService } from '../../services/decks.service';
 
 import { CsvDataset } from '../../models/csv-dataset';
 import { Template } from '../../models/template';
-import { CardImage } from '../../models/card-image';
+import { Deck } from '../../models/deck';
 
 
 import * as fabric from 'fabric';
@@ -28,8 +28,8 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   template!: Template;
   csvDataset!: CsvDataset;
   imageRepository = new Map<string, File>();
-
-
+  
+  private deckImages: Array<{ base64: string }> = []; 
   private canvas!: fabric.Canvas;
   private templateId!: number;
   isLoading = false;
@@ -37,8 +37,9 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private templateService: TemplateService,
-    private csvService: CsvDataService
+    private templateService: TemplatesService,
+    private csvService: CsvDatasetsService,
+    private decksService: DecksService
   ) { }
 
   private delay(ms: number): Promise<void> {
@@ -105,8 +106,9 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
       await this.delay(100);
       await this.saveCurrentCard();
       this.resetCanvas();
-
     }
+    this.sendDeckToBackend('Prueba');
+
   }
 
 
@@ -141,25 +143,38 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
       multiplier: 1
     });
 
-    this.debugImageData(imageData);
-  }
+    this.deckImages.push({ base64: imageData });
+    console.log('Datos de imagen generada:', this.deckImages);
 
-  private debugImageData(imageData: string): void {
-    const img = new Image();
-    img.src = imageData;
-    img.onload = () => {
-      document.body.appendChild(img); 
-    };
-
-    console.log('Datos de imagen:', {
-      preview: imageData.substring(0, 50) + '...',
-      sizeBytes: Math.round(imageData.length * 0.75)
-    });
   }
 
   private resetCanvas(): void {
     this.canvas.clear();
     this.canvas.requestRenderAll();
+  }
+
+  async sendDeckToBackend(deckName: string): Promise<void> {
+    if (this.deckImages.length === 0) {
+      throw new Error("No hay cartas para enviar");
+    }
+
+    const deckData = {
+      name: deckName,
+      cards: this.deckImages
+    }
+
+    this.decksService.createDeck(this.user.id, deckData).subscribe({
+      next: (response) => {
+        console.log('Deck creado exitosamente:', response);
+        alert('Deck creado exitosamente');
+        this.router.navigate(['/cards/manager']);
+      },
+      error: (error) => {
+        console.error('Error al crear el deck:', error);
+        alert('Error al crear el deck: ' + (error.error?.message || 'Error desconocido'));
+      }
+    });
+    this.deckImages = []; 
   }
 
   private async getTemplateAndCsvData(): Promise<void> {
@@ -293,7 +308,7 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
 
 
 
-  //--------------------------------------------------------------------
+  //----------------------------Support----------------------------------------
 
   async loadImageFromFile(file: File): Promise<void> {
     const imageUrl = URL.createObjectURL(file);
@@ -325,4 +340,19 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
       URL.revokeObjectURL(imageUrl);
     }
   }
+
+  private debugImageData(imageData: string): void {
+    const img = new Image();
+    img.src = imageData;
+    img.onload = () => {
+      document.body.appendChild(img); 
+    };
+
+    console.log('Datos de imagen:', {
+      preview: imageData.substring(0, 50) + '...',
+      sizeBytes: Math.round(imageData.length * 0.75)
+    });
+  }
+
+  //TODO: boton para eliminar las imagenes de this.imageRepository
 }

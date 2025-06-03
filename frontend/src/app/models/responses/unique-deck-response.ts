@@ -1,7 +1,7 @@
-import { CardImage } from "../card-image";
+import { Deck } from "../deck";
 
 export interface UniqueCardImageResponse {
     error: boolean;
     status: number;
-    body: CardImage;
+    body: Deck;
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { TemplateService } from '../../services/template.service';
-import { CsvDataService } from '../../services/csv-data.service';
+import { TemplatesService } from '../../services/templates.service';
+import { CsvDatasetsService } from '../../services/csv-datasets.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -20,7 +20,7 @@ export class DeckManagerComponent {
 
   generateDeck: boolean = false;
 
-  constructor(private templateService: TemplateService, private csvService: CsvDataService, private router: Router) { }
+  constructor(private templateService: TemplatesService, private csvService: CsvDatasetsService, private router: Router) { }
 
   ngOnInit(): void {
     const userData = localStorage.getItem('user');

@@ -2,7 +2,7 @@ import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CanvasObject } from '../models/canvas-object';
 import { v4 as uuidv4 } from 'uuid';
-import { TemplateService } from '../../services/template.service';
+import { TemplatesService } from '../../services/templates.service';
 import { Template } from '../../models/template';
 
 import * as fabric from 'fabric';
@@ -21,7 +21,7 @@ export class EditorComponent implements AfterViewInit {
 
   constructor(
 
-    private templateService: TemplateService,
+    private templateService: TemplatesService,
     private route: ActivatedRoute,
 
   ) { }

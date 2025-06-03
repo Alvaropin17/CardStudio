@@ -8,7 +8,7 @@ import { UniqueCsvDatasetResponse } from '../models/responses/unique-csv-dataset
 @Injectable({
     providedIn: 'root'
 })
-export class CsvDataService {
+export class CsvDatasetsService {
 
     private baseUrl = 'http://localhost:3000/api/users';
 
