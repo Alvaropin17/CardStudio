@@ -11,7 +11,8 @@ import { Deck } from '../../models/deck';
 
 import * as fabric from 'fabric';
 
-
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-deck-generator',
@@ -28,8 +29,8 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   template!: Template;
   csvDataset!: CsvDataset;
   imageRepository = new Map<string, File>();
-  
-  private deckImages: Array<{ base64: string }> = []; 
+
+  private deckImages: Array<{ base64: string }> = [];
   private canvas!: fabric.Canvas;
   private templateId!: number;
   isLoading = false;
@@ -45,6 +46,8 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+
 
   async ngOnInit(): Promise<void> {
     try {
@@ -107,8 +110,7 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
       await this.saveCurrentCard();
       this.resetCanvas();
     }
-    this.sendDeckToBackend('Prueba');
-
+    this.downloadAllCardsAsZip();
   }
 
 
@@ -132,7 +134,7 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
 
 
   private async saveCurrentCard(): Promise<void> {
-    
+
     this.canvas.requestRenderAll();
 
     await new Promise(resolve => requestAnimationFrame(resolve));
@@ -145,36 +147,29 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
 
     this.deckImages.push({ base64: imageData });
     console.log('Datos de imagen generada:', this.deckImages);
+    /*
+        const link = document.createElement('a');
+        link.href = imageData;
+        link.download = `card_${this.deckImages.length}.png`;
+        link.click();
+    */
+  }
 
+  private async downloadAllCardsAsZip(): Promise<void> {
+    const zip = new JSZip();
+
+    this.deckImages.forEach((image, index) => {
+      const base64Data = image.base64.split(',')[1];
+      zip.file(`card_${index + 1}.png`, base64Data, { base64: true });
+    });
+
+    const content = await zip.generateAsync({ type: 'blob' });
+    saveAs(content, 'deck_cards.zip');
   }
 
   private resetCanvas(): void {
     this.canvas.clear();
     this.canvas.requestRenderAll();
-  }
-
-  async sendDeckToBackend(deckName: string): Promise<void> {
-    if (this.deckImages.length === 0) {
-      throw new Error("No hay cartas para enviar");
-    }
-
-    const deckData = {
-      name: deckName,
-      cards: this.deckImages
-    }
-
-    this.decksService.createDeck(this.user.id, deckData).subscribe({
-      next: (response) => {
-        console.log('Deck creado exitosamente:', response);
-        alert('Deck creado exitosamente');
-        this.router.navigate(['/cards/manager']);
-      },
-      error: (error) => {
-        console.error('Error al crear el deck:', error);
-        alert('Error al crear el deck: ' + (error.error?.message || 'Error desconocido'));
-      }
-    });
-    this.deckImages = []; 
   }
 
   private async getTemplateAndCsvData(): Promise<void> {
@@ -251,7 +246,7 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
       obj.type === 'image') as fabric.FabricImage[];
 
     console.log('Objetos de imagen en el canvas:', imageObjects);
-      
+
     for (const imgObj of imageObjects) {
       const matchingHeader = this.csvDataset?.headers.find(
         header => header.toLowerCase() === imgObj.name!.toLowerCase().trim()
@@ -272,12 +267,12 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
       const imageUrl = URL.createObjectURL(newImageFile);
 
       try {
-        
+
         const newImg = await fabric.FabricImage.fromURL(imageUrl);
 
         const originalScaledWidth = oldImage.getScaledWidth();
         const originalScaledHeight = oldImage.getScaledHeight();
-        
+
         const scaleX = originalScaledWidth / newImg.width!;
         const scaleY = originalScaledHeight / newImg.height!;
 
@@ -291,7 +286,7 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
           originY: oldImage.originY,
           name: oldImage.name,
           id: oldImage.id,
-          selectable: false 
+          selectable: false
         });
 
         this.canvas.remove(oldImage);
@@ -345,13 +340,37 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
     const img = new Image();
     img.src = imageData;
     img.onload = () => {
-      document.body.appendChild(img); 
+      document.body.appendChild(img);
     };
 
     console.log('Datos de imagen:', {
       preview: imageData.substring(0, 50) + '...',
       sizeBytes: Math.round(imageData.length * 0.75)
     });
+  }
+  //----------------------------Future backend support----------------------------------------
+  async sendDeckToBackend(deckName: string): Promise<void> {
+    if (this.deckImages.length === 0) {
+      throw new Error("No hay cartas para enviar");
+    }
+
+    const deckData = {
+      name: deckName,
+      cards: this.deckImages
+    }
+
+    this.decksService.createDeck(this.user.id, deckData).subscribe({
+      next: (response) => {
+        console.log('Deck creado exitosamente:', response);
+        alert('Deck creado exitosamente');
+        this.router.navigate(['/cards/manager']);
+      },
+      error: (error) => {
+        console.error('Error al crear el deck:', error);
+        alert('Error al crear el deck: ' + (error.error?.message || 'Error desconocido'));
+      }
+    });
+    this.deckImages = [];
   }
 
   //TODO: boton para eliminar las imagenes de this.imageRepository
