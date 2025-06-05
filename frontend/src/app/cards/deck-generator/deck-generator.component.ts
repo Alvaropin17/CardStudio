@@ -8,6 +8,9 @@ import { CsvDataset } from '../../models/csv-dataset';
 import { Template } from '../../models/template';
 import { Deck } from '../../models/deck';
 
+import { jsPDF } from 'jspdf';
+
+
 
 import * as fabric from 'fabric';
 
@@ -80,6 +83,8 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
 
   }
 
+  
+
 
   private initCanvas(): void {
     this.canvas = new fabric.Canvas('generation-canvas', {
@@ -110,7 +115,11 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
       await this.saveCurrentCard();
       this.resetCanvas();
     }
-    this.downloadAllCardsAsZip();
+    if (saveAsPdf === true) {
+      await this.downloadCardsAsPDF();
+    } else {
+      await this.downloadAllCardsAsZip();
+    }
   }
 
 
@@ -166,6 +175,46 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
     const content = await zip.generateAsync({ type: 'blob' });
     saveAs(content, 'deck_cards.zip');
   }
+
+  private async downloadCardsAsPDF() {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const cardWidth = 60;  // Tamaño de cada carta (en mm)
+    const cardHeight = 88;
+    const marginX = 10;    // Márgenes para espaciar
+    const marginY = 10;
+
+    const cardsPerRow = 3;
+    const cardsPerCol = 3;
+    const cardsPerPage = cardsPerRow * cardsPerCol;
+
+    for (let i = 0; i < this.deckImages.length; i++) {
+      const pageIndex = Math.floor(i / cardsPerPage);
+      const posInPage = i % cardsPerPage;
+
+      const row = Math.floor(posInPage / cardsPerRow);
+      const col = posInPage % cardsPerRow;
+
+      const x = marginX + col * (cardWidth + marginX);
+      const y = marginY + row * (cardHeight + marginY);
+
+      if (i !== 0 && posInPage === 0) {
+        doc.addPage(); // Nueva página si es necesario
+      }
+
+      doc.addImage(
+        this.deckImages[i].base64,
+        'PNG',
+        x,
+        y,
+        cardWidth,
+        cardHeight
+      );
+    }
+
+    doc.save('deck_cards.pdf');
+  }
+
 
   private resetCanvas(): void {
     this.canvas.clear();
