@@ -2,6 +2,14 @@
     <div class="genera-button" *ngIf="isLoading === false">
         <button (click)="generateDeck()">Generar mazo</button>
     </div>
+     <div class="genera-button" *ngIf="saveAsPdf === false">
+        <a>El mazo se generará como un zip con todas las imágenes</a>
+        <button (click)="saveAsPdf=!saveAsPdf">Generar mazo como PDF</button>
+    </div>
+    <div class="genera-button" *ngIf="saveAsPdf === true">
+        <a>El mazo se generará como un PDF listo para imprimir</a>
+        <button (click)="saveAsPdf=!saveAsPdf">Generar mazo</button>
+    </div>
     <div class="folder-upload">
         <button (click)="triggerFolderInput()">Subir carpeta de imágenes</button>
         <input #folderInput type="file" webkitdirectory directory multiple accept="image/*"

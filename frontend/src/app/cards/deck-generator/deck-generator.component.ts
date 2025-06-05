@@ -33,6 +33,8 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   csvDataset!: CsvDataset;
   imageRepository = new Map<string, File>();
 
+  saveAsPdf = false;
+
   private deckImages: Array<{ base64: string }> = [];
   private canvas!: fabric.Canvas;
   private templateId!: number;
@@ -78,8 +80,13 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error:', error);
     }
-    alert('Cartas generadas con éxito');
     this.isLoading = false;
+    if (this.saveAsPdf === true) {
+      await this.downloadCardsAsPDF();
+    } else {
+      await this.downloadAllCardsAsZip();
+    }
+    this.deckImages = [];
 
   }
 
@@ -114,11 +121,6 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
       await this.delay(100);
       await this.saveCurrentCard();
       this.resetCanvas();
-    }
-    if (saveAsPdf === true) {
-      await this.downloadCardsAsPDF();
-    } else {
-      await this.downloadAllCardsAsZip();
     }
   }
 
@@ -419,7 +421,6 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
         alert('Error al crear el deck: ' + (error.error?.message || 'Error desconocido'));
       }
     });
-    this.deckImages = [];
   }
 
   //TODO: boton para eliminar las imagenes de this.imageRepository
