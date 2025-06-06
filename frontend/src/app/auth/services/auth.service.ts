@@ -14,23 +14,19 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(user: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, { user, password }, {
-      withCredentials: true
-    }).pipe(
-      catchError(this.handleError)
-    );
-  }
+login(user: string, password: string): Observable<LoginResponse> {
+  return this.http.post<LoginResponse>(`${this.baseUrl}/login`, { user, password }, {
+    withCredentials: true
+  }).pipe(
+    tap((response) => {
+      localStorage.setItem('user', JSON.stringify(response.body));
+    }),
+    catchError(error => {
+      return throwError(() => new Error(error.message));
+    })
+  );
+}
 
-  // TO DO: NEEDS TO BE IMPLEMENTED IN BACKEND
-  checkAuth(): Observable<User> {
-    return this.http.get<{ authenticated: boolean, user: User }>(`${this.baseUrl}/check`, {
-      withCredentials: true
-    }).pipe(
-      map(res => res.user),
-      catchError(this.handleError)
-    );
-  }
 
   logout(): Observable<any> {
     return this.http.post('/api/logout', {}).pipe(
@@ -38,7 +34,7 @@ export class AuthService {
         localStorage.removeItem('user');
       }),
       catchError(error => {
-        localStorage.clear(); // Limpiar igualmente
+        localStorage.clear(); 
         return throwError(error);
       })
     );
@@ -48,6 +44,17 @@ export class AuthService {
     return this.http.post<RegisterResponse>(`${this.baseUrl}/register`, {
       user, password, email
     }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  
+  // TO DO: NEEDS TO BE IMPLEMENTED IN BACKEND
+  checkAuth(): Observable<User> {
+    return this.http.get<{ authenticated: boolean, user: User }>(`${this.baseUrl}/check`, {
+      withCredentials: true
+    }).pipe(
+      map(res => res.user),
       catchError(this.handleError)
     );
   }
