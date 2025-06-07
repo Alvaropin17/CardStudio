@@ -53,20 +53,6 @@ canvas {
   background-color: #5a67d8;
 }
 
-.color-picker label {
-  font-weight: 500;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.color-picker input[type='color'] {
-  border: none;
-  background: none;
-  cursor: pointer;
-  padding: 0;
-}
-
 .objects-list {
   padding: 10px;
 }

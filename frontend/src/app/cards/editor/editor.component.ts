@@ -404,17 +404,20 @@ export class EditorComponent implements AfterViewInit {
 
   //------------------------------------CANVAS SAVE AND EXPORT------------------------------------
 
-  exportCanvasAsJson(): void {
+  exportCanvasAsJson(saveInDatabase: boolean): void {
     this.templateToSave = null;
     const canvasJson = JSON.stringify((this.canvas as any).toJSON(['name', 'id']));
+
+    if(!saveInDatabase){
+      navigator.clipboard?.writeText(canvasJson);
+      return;
+    }
 
     this.templateToSave = {
       user_id: 0,
       name: '',
       canvas_json: canvasJson
     };
-
-    navigator.clipboard?.writeText(canvasJson);
 
   }
 
@@ -481,6 +484,25 @@ export class EditorComponent implements AfterViewInit {
     }
   }
 
+  saveImage(): void {
+  this.canvas.requestRenderAll();
+
+  requestAnimationFrame(() => {
+    const imageData = this.canvas.toDataURL({
+      format: 'png',
+      quality: 1,
+      multiplier: 1
+    });
+
+    const link = document.createElement('a');
+    link.href = imageData;
+    link.download = 'carta.png';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+}
   /*
       // Ejemplo: descargar el JSON como archivo
       const blob = new Blob([jsonString], { type: 'application/json' });
