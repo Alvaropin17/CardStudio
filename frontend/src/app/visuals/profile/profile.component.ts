@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TemplatesService } from '../../services/templates.service';
-import { CsvDatasetsService } from '../../services/csv-datasets.service';
-import { Template } from '../../models/template';
-import { CsvDataset } from '../../models/csv-dataset';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -12,31 +9,16 @@ import { CsvDataset } from '../../models/csv-dataset';
 })
 export class ProfileComponent implements OnInit {
   user: any;
-  templates: any[] = [];
-  csvDatasets: any[] = [];
 
-  constructor(private templateService: TemplatesService, private csvService: CsvDatasetsService) { }
+
+  constructor(private router:Router) { }
 
   ngOnInit(): void {
     const userData = localStorage.getItem('user');
-    if (userData) {
-      this.user = JSON.parse(userData);
-      this.loadUserData(this.user.id);
-    } else {
-      // Redirigir al login o mostrar error si no hay usuario
-      console.error('Usuario no logueado');
+    if (!userData) {
+      this.router.navigate(['/auth/login']);
+      return;
     }
-  }
-
-  loadUserData(userId: number): void {
-    this.csvService.getAllCsvById(userId).subscribe({
-      next: (data) => this.csvDatasets = data.body,
-      error: (err) => console.error('Error al obtener CSV datasets:', err)
-    });
-
-    this.templateService.getAllTemplatesById(userId).subscribe({
-      next: (data) => this.templates = data.body,
-      error: (err) => console.error('Error al obtener templates:', err)
-    });
+    this.user = JSON.parse(userData);
   }
 }

@@ -24,12 +24,11 @@ export class DeckManagerComponent {
 
   ngOnInit(): void {
     const userData = localStorage.getItem('user');
-    if (userData) {
-      this.user = JSON.parse(userData);
-      this.loadUserData(this.user.id);
-    } else {
-      console.error('Usuario no logueado');
+    if (!userData) {
+      this.router.navigate(['/auth/login']);
+      return;
     }
+    this.user = JSON.parse(userData);
   }
 
   loadUserData(userId: number): void {

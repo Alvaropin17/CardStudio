@@ -59,7 +59,6 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
       this.templateId = +this.route.snapshot.params['templateId'];
       const userData = localStorage.getItem('user');
       if (!userData) {
-        alert('Usuario no logueado');
         this.router.navigate(['/auth/login']);
         return;
       }
