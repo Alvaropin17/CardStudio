@@ -17,8 +17,6 @@ import * as fabric from 'fabric';
 })
 export class EditorComponent implements AfterViewInit {
 
-
-
   constructor(
 
     private templateService: TemplatesService,
@@ -47,12 +45,10 @@ export class EditorComponent implements AfterViewInit {
   templateToSave: Template | null = null;
   templateName: string = '';
 
+  sizeDecided:boolean = false;
+
 
   selectedColor: string = '#ff0000';
-  selectedFont: string = 'Arial';
-  selectedFontSize: number = 20;
-
-  selectedFontFamily: string = 'Arial, sans-serif';
 
   updateObjectName() {
     this.elementCounter++;
@@ -100,13 +96,15 @@ export class EditorComponent implements AfterViewInit {
         this.canvas.renderAll();
         console.log('Template cargado en el canvas');
       });
-    }
-
-    this.canvas = new fabric.Canvas(this.canvasRef.nativeElement, {
+    }else{
+      this.canvas = new fabric.Canvas(this.canvasRef.nativeElement, {
       width: 600,
       height: 900,
       backgroundColor: '#fff'
     });
+    }
+
+
 
     this.canvas.on('selection:created', (e) => {
       this.activeObject = e.selected ? e.selected[0] : null;
@@ -139,8 +137,7 @@ export class EditorComponent implements AfterViewInit {
       top: 50,
       width: 200,
       fill: this.selectedColor,
-      fontFamily: this.selectedFont,
-      fontSize: this.selectedFontSize
+
     });
 
     const id = uuidv4();

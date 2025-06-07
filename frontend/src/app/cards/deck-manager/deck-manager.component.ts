@@ -29,6 +29,7 @@ export class DeckManagerComponent {
       return;
     }
     this.user = JSON.parse(userData);
+    this.loadUserData(this.user.id);
   }
 
   loadUserData(userId: number): void {

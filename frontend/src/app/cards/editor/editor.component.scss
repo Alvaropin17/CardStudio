@@ -87,3 +87,51 @@ canvas {
 .arrow-buttons button:hover {
   background-color: #cbd5e0;
 }
+
+.caja {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+  flex-wrap: wrap;
+}
+
+.b1 {
+  position: relative;
+  width: 200px;
+  height: 40px;
+  background: #00C5C6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 30px;
+  border-radius: 10px;
+  border: 0;
+}
+
+.b2 {
+  position: relative;
+  width: 200px;
+  height: 40px;
+  background: #FFF480;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 30px;
+  border-radius: 10px;
+  border: 0;
+}
+
+.b3 {
+  position: relative;
+  width: 200px;
+  height: 40px;
+  background: linear-gradient(45deg, #FE8E76, #FF3E39);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 30px;
+  border-radius: 10px;
+  border: 0;
+}

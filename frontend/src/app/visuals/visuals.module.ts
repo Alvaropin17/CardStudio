@@ -4,13 +4,15 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { RouterModule } from '@angular/router';
 import { ProfileComponent } from './profile/profile.component';
 import { VisualsRoutingModule } from './visuals-routing.module';
+import { InstructionsComponent } from './instructions/instructions.component';
 
 
 
 @NgModule({
   declarations: [
     NavbarComponent,
-    ProfileComponent
+    ProfileComponent,
+    InstructionsComponent
   ],
   imports: [
     CommonModule,
