@@ -3,7 +3,7 @@
     <button (click)="addText()">Añadir texto</button>
     <button (click)="addRectangle()">Añadir rectángulo</button>
     <button (click)="addCircle()">Añadir círculo</button>
-    <button (click)="addCanvasBorder()">Añadir borde</button>
+    <button >Añadir borde</button>
     <button (click)="loadImage('dragon.jpg')">Añadir imagen</button>
     <button (click)="deleteActiveObject()">Eliminar elemento</button>
     <button (click)="clearCanvas()">Limpiar</button>
@@ -51,13 +51,13 @@
 
       <!-- Color -->
       <div class="form-group">
-        <label>Color de relleno:</label>
+        <label>Color:</label>
         <input type="color" [value]="getObjectColor()" (input)="updateProperty('fill', $any($event.target).value)"
           class="form-control" />
       </div>
 
       <!--Font-->
-      <div class="form-group">
+      <div *ngIf="isTextObject()" class="form-group">
         <label>
           Fuente:
           <select [(ngModel)]="selectedFont" (change)="onFontChange()" style="width: 4rem; ">

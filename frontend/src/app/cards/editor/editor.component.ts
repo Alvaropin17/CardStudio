@@ -82,16 +82,16 @@ export class EditorComponent implements AfterViewInit {
   }
 
   extendFabricSerialization() {
-  fabric.FabricObject.prototype.toObject = (function (toObject) {
-    return function (this: any, ...args: any[]) {
-      return {
-        ...toObject.call(this, ...args),
-        id: this.id,
-        name: this.name
+    fabric.FabricObject.prototype.toObject = (function (toObject) {
+      return function (this: any, ...args: any[]) {
+        return {
+          ...toObject.call(this, ...args),
+          id: this.id,
+          name: this.name
+        };
       };
-    };
-  })(fabric.Object.prototype.toObject);
-}
+    })(fabric.Object.prototype.toObject);
+  }
 
   ngAfterViewInit(): void {
 
@@ -149,15 +149,7 @@ export class EditorComponent implements AfterViewInit {
     this.canvas.add(text);
     this.canvas.setActiveObject(text);
 
-    this.canvasObjectsList.unshift({
-      id,
-      name: this.objectName,
-      type: 'Text',
-      fabricObject: text
-    });
-
-    this.updateObjectName();
-
+    this.registerCanvasObject(id, this.objectName, text.type, text);
   }
 
   addRectangle() {
@@ -175,15 +167,7 @@ export class EditorComponent implements AfterViewInit {
     this.canvas.add(rect);
     this.canvas.setActiveObject(rect);
 
-    this.canvasObjectsList.unshift({
-      id,
-      name: this.objectName,
-      type: 'Rectangle',
-      fabricObject: rect
-    });
-
-    this.updateObjectName();
-
+    this.registerCanvasObject(id, this.objectName, rect.type, rect);
   }
 
   addCircle() {
@@ -197,51 +181,13 @@ export class EditorComponent implements AfterViewInit {
     const id = uuidv4();
     circle.name = this.objectName;
     circle.id = id;
+
     this.canvas.add(circle);
     this.canvas.setActiveObject(circle);
 
-    this.canvasObjectsList.unshift({
-      id,
-      name: this.objectName,
-      type: 'Circle',
-      fabricObject: circle
-    });
-
-    this.updateObjectName();
-
+    this.registerCanvasObject(id, this.objectName, circle.type, circle);
   }
 
-  addCanvasBorder() {
-    const border = new fabric.Rect({
-      left: 0.5,
-      top: 0.5,
-      width: this.canvas.getWidth() - 3,
-      height: this.canvas.getHeight() - 3,
-      fill: 'transparent',
-      stroke: 'black',
-      strokeUniform: true,
-      strokeWidth: 2,
-      selectable: true,
-      evented: true,
-      name: 'Border',
-    });
-
-
-    const id = uuidv4();
-    border.set({ name: this.objectName, id });
-
-    this.canvas.add(border);
-    this.canvas.setActiveObject(border);
-
-    this.canvasObjectsList.unshift({
-      id,
-      name: this.objectName,
-      type: 'Border',
-      fabricObject: border
-    });
-
-    this.updateObjectName();
-  }
 
 
   async loadImage(imagePath: string): Promise<void> {
@@ -276,16 +222,10 @@ export class EditorComponent implements AfterViewInit {
       this.canvas.add(img);
       this.canvas.setActiveObject(img);
 
-      this.canvasObjectsList.unshift({
-        id: id,
-        name: this.objectName,
-        type: 'Image',
-        fabricObject: img
-      });
+      this.registerCanvasObject(id, this.objectName, img.type, img);
 
-      this.updateObjectName();
 
-      this.canvas.renderAll();
+      this.canvas.requestRenderAll();
     } catch (error) {
       console.error('Error al cargar imagen:', error);
     }
@@ -317,6 +257,16 @@ export class EditorComponent implements AfterViewInit {
 
   //------------------------------------LIST ------------------------------------
 
+  private registerCanvasObject(id: string, name: string, type: string, fabricObject: fabric.Object): void {
+    this.canvasObjectsList.unshift({
+      id,
+      name,
+      type,
+      fabricObject
+    });
+
+    this.updateObjectName();
+  }
 
   selectObjectFromList(object: CanvasObject) {
     const fabricObject = object.fabricObject;
@@ -408,7 +358,7 @@ export class EditorComponent implements AfterViewInit {
     this.templateToSave = null;
     const canvasJson = JSON.stringify((this.canvas as any).toJSON(['name', 'id']));
 
-    if(!saveInDatabase){
+    if (!saveInDatabase) {
       navigator.clipboard?.writeText(canvasJson);
       return;
     }
@@ -485,24 +435,24 @@ export class EditorComponent implements AfterViewInit {
   }
 
   saveImage(): void {
-  this.canvas.requestRenderAll();
+    this.canvas.requestRenderAll();
 
-  requestAnimationFrame(() => {
-    const imageData = this.canvas.toDataURL({
-      format: 'png',
-      quality: 1,
-      multiplier: 1
+    requestAnimationFrame(() => {
+      const imageData = this.canvas.toDataURL({
+        format: 'png',
+        quality: 1,
+        multiplier: 1
+      });
+
+      const link = document.createElement('a');
+      link.href = imageData;
+      link.download = 'carta.png';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     });
-
-    const link = document.createElement('a');
-    link.href = imageData;
-    link.download = 'carta.png';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  });
-}
+  }
   /*
       // Ejemplo: descargar el JSON como archivo
       const blob = new Blob([jsonString], { type: 'application/json' });
@@ -533,7 +483,7 @@ export class EditorComponent implements AfterViewInit {
 
 
 
- 
+
 
   //------------------------------------ELEMENT PROPERTIES------------------------------------
 
@@ -590,10 +540,10 @@ export class EditorComponent implements AfterViewInit {
   updateProperty(property: string, value: any): void {
     if (!this.activeObject) return;
 
-    // Conversión segura a número para propiedades de posición
+
     if (property === 'left' || property === 'top' || property === 'angle') {
       value = Number(value);
-      if (isNaN(value)) return; // Validación adicional
+      if (isNaN(value)) return; 
     }
 
     this.activeObject.set(property, value);
@@ -603,8 +553,7 @@ export class EditorComponent implements AfterViewInit {
       (this.activeObject as fabric.Text).initDimensions();
     }
 
-    // Forzar actualización visual
-    this.activeObject.setCoords(); // <-- Esto es clave para actualizar posición
+    this.activeObject.setCoords();
     this.canvas.requestRenderAll();
   }
 

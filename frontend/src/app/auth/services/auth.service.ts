@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, throwError, map, tap } from 'rxjs';
+import { Observable, catchError, throwError, map, tap, BehaviorSubject } from 'rxjs';
 import { LoginResponse } from '../models/login-response';
 import { RegisterResponse } from '../models/register-response';
 import { User } from '../../models/user';
@@ -12,31 +12,37 @@ export class AuthService {
 
   private baseUrl = 'http://localhost:3000/api/auth';
 
+  private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasUser());
+  public isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();
+
   constructor(private http: HttpClient) { }
 
-login(user: string, password: string): Observable<LoginResponse> {
-  return this.http.post<LoginResponse>(`${this.baseUrl}/login`, { user, password }, {
-    withCredentials: true
-  }).pipe(
-    tap((response) => {
-      localStorage.setItem('user', JSON.stringify(response.body));
-    }),
-    catchError(error => {
-      return throwError(() => new Error(error.message));
-    })
-  );
-}
+  private hasUser(): boolean {
+    return !!localStorage.getItem('user');
+  }
 
+  login(user: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, { user, password }, {
+      withCredentials: true
+    }).pipe(
+      tap((response) => {
+        localStorage.setItem('user', JSON.stringify(response.body));
+        this.isLoggedInSubject.next(true); 
+
+      }),
+      catchError(this.handleError)
+    );
+  }
 
   logout(): Observable<any> {
-    return this.http.post('/api/logout', {}).pipe(
+    return this.http.post(`${this.baseUrl}/logout`, {}, {
+      withCredentials: true
+    }).pipe(
       tap(() => {
         localStorage.removeItem('user');
+        this.isLoggedInSubject.next(false);
       }),
-      catchError(error => {
-        localStorage.clear(); 
-        return throwError(error);
-      })
+      catchError(this.handleError)
     );
   }
 
@@ -48,7 +54,7 @@ login(user: string, password: string): Observable<LoginResponse> {
     );
   }
 
-  
+
   // TO DO: NEEDS TO BE IMPLEMENTED IN BACKEND
   checkAuth(): Observable<User> {
     return this.http.get<{ authenticated: boolean, user: User }>(`${this.baseUrl}/check`, {
@@ -64,3 +70,4 @@ login(user: string, password: string): Observable<LoginResponse> {
     return throwError(() => new Error(message));
   }
 }
+
