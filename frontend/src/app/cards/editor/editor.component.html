@@ -10,7 +10,7 @@
     <button (click)="addText()">Añadir texto</button>
     <button (click)="addRectangle()">Añadir rectángulo</button>
     <button (click)="addCircle()">Añadir círculo</button>
-    <button >Añadir borde</button>
+    <button>Añadir borde</button>
     <button (click)="loadImage('dragon.jpg')">Añadir imagen</button>
     <button (click)="deleteActiveObject()">Eliminar elemento</button>
     <button (click)="clearCanvas()">Limpiar</button>
@@ -115,9 +115,15 @@
           (input)="updateProperty('angle', this.parseFloatNumber($any($event.target).value))" min="0" max="360"
           class="form-control" />
       </div>
-
     </div>
-    <h3>Objetos en el lienzo</h3>
+  </div>
+  <div class="position-control toolbar">
+    <h2>Gestión del lienzo</h2>
+    <div>
+      <label>Color de fondo:</label>
+      <input type="color" (change)="changeCanvasBackgroundColor($event)">
+    </div>
+    <h3>Objetos del lienzo</h3>
     <div class="arrow-buttons">
       <button (click)="bringToFront()" title="Traer al frente">⏫</button>
       <button (click)="moveUp()" title="Subir una capa">🔼</button>
@@ -131,6 +137,5 @@
     </ul>
 
   </div>
-
 
 </div>

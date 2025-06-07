@@ -27,6 +27,8 @@ canvas {
 .toolbar {
   display: flex;
   flex-direction: column;
+  align-self: flex-start;
+  margin-left: 0; 
   gap: 1rem;
   position: sticky;
   top: 2rem;

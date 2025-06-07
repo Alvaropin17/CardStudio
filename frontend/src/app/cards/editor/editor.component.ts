@@ -45,7 +45,7 @@ export class EditorComponent implements AfterViewInit {
   templateToSave: Template | null = null;
   templateName: string = '';
 
-  sizeDecided:boolean = false;
+  sizeDecided: boolean = false;
 
 
   selectedColor: string = '#ff0000';
@@ -96,12 +96,12 @@ export class EditorComponent implements AfterViewInit {
         this.canvas.renderAll();
         console.log('Template cargado en el canvas');
       });
-    }else{
+    } else {
       this.canvas = new fabric.Canvas(this.canvasRef.nativeElement, {
-      width: 600,
-      height: 900,
-      backgroundColor: '#fff'
-    });
+        width: 600,
+        height: 900,
+        backgroundColor: '#fff'
+      });
     }
 
 
@@ -141,7 +141,8 @@ export class EditorComponent implements AfterViewInit {
     });
 
     const id = uuidv4();
-    text.set({ name: this.objectName, id });
+    text.name = this.objectName;
+    text.id = id;
 
     this.canvas.add(text);
     this.canvas.setActiveObject(text);
@@ -159,7 +160,8 @@ export class EditorComponent implements AfterViewInit {
     });
 
     const id = uuidv4();
-    rect.set({ name: this.objectName, id });
+    rect.name = this.objectName;
+    rect.id = id;
 
     this.canvas.add(rect);
     this.canvas.setActiveObject(rect);
@@ -184,8 +186,6 @@ export class EditorComponent implements AfterViewInit {
 
     this.registerCanvasObject(id, this.objectName, circle.type, circle);
   }
-
-
 
   async loadImage(imagePath: string): Promise<void> {
     try {
@@ -227,6 +227,17 @@ export class EditorComponent implements AfterViewInit {
       console.error('Error al cargar imagen:', error);
     }
   }
+
+  changeCanvasBackgroundColor(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const color = input.value;
+
+
+    this.canvas.backgroundColor = color;
+    this.canvas.requestRenderAll();
+  }
+
+
 
   deleteActiveObject() {
     if (this.activeObject) {
@@ -540,7 +551,7 @@ export class EditorComponent implements AfterViewInit {
 
     if (property === 'left' || property === 'top' || property === 'angle') {
       value = Number(value);
-      if (isNaN(value)) return; 
+      if (isNaN(value)) return;
     }
 
     this.activeObject.set(property, value);
