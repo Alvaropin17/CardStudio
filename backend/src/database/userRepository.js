@@ -105,6 +105,7 @@ function deleteUser(id) {
 //---------------------------------------------OTHER QUERIES---------------------------------------------//
 
 async function getByName(username) {
+
     return new Promise((resolve, reject) => {
         db.query(
             'SELECT * FROM users WHERE name = ?',

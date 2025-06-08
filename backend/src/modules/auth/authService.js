@@ -8,6 +8,7 @@ const User = require('../../database/models/user');
 
 async function login(body) {
 
+
     const username = body.user;
     const password = body.password;
 
@@ -90,8 +91,7 @@ async function register(body) {
         throw { status: 409, message: 'Username already exists' };
     }
 
-    const newUser = new User(null, username, password, email);
-    const createdUser = await userService.createUser(newUser);
+    const createdUser = await userService.createUser(body);
 
     return {
         user: createdUser.toJSON()

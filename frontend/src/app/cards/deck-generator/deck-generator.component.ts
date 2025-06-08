@@ -33,7 +33,6 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
   csvDataset!: CsvDataset;
   imageRepository = new Map<string, File>();
 
-  saveAsPdf = false;
 
   private deckImages: Array<{ base64: string }> = [];
   private canvas!: fabric.Canvas;
@@ -70,7 +69,7 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
     }
   }
 
-  async generateDeck(): Promise<void> {
+  async generateDeck(saveAsPdf: boolean): Promise<void> {
     try {
       this.isLoading = true;
       this.initCanvas();
@@ -80,7 +79,7 @@ export class DeckGeneratorComponent implements OnInit, OnDestroy {
       console.error('Error:', error);
     }
     this.isLoading = false;
-    if (this.saveAsPdf === true) {
+    if (saveAsPdf === true) {
       await this.downloadCardsAsPDF();
     } else {
       await this.downloadAllCardsAsZip();

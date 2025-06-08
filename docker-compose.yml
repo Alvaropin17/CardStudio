@@ -1,0 +1,43 @@
+services:
+  backend:
+    depends_on:
+      mysql:
+        condition: service_healthy
+    build: .    
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    networks:
+      - app-network
+    restart: always
+
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234password?"
+      MYSQL_DATABASE: "appdatabase"     
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: appuserpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    networks:
+      - app-network
+      
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge

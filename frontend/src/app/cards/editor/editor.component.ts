@@ -17,6 +17,8 @@ import * as fabric from 'fabric';
 })
 export class EditorComponent implements AfterViewInit {
 
+  user: any;
+
   constructor(
 
     private templateService: TemplatesService,
@@ -60,10 +62,10 @@ export class EditorComponent implements AfterViewInit {
   ngOnInit(): void {
 
     this.importedJsonId = this.route.snapshot.paramMap.get('id');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.user = JSON.parse(localStorage.getItem('user') || '{}');
 
-    if (this.importedJsonId && user?.id) {
-      this.templateService.getTemplateById(user.id, +this.importedJsonId).subscribe({
+    if (this.importedJsonId && this.user?.id) {
+      this.templateService.getTemplateById(this.user.id, +this.importedJsonId).subscribe({
         next: (templateResponse) => {
 
           this.importedJson = templateResponse.body.canvas_json;
@@ -86,7 +88,7 @@ export class EditorComponent implements AfterViewInit {
           name: this.name
         };
       };
-    })(fabric.Object.prototype.toObject);
+    })(fabric.FabricObject.prototype.toObject);
   }
 
   ngAfterViewInit(): void {

@@ -1,8 +1,8 @@
 <!--
-<div *ngIf="!sizeDecided">
-  <button class="b1" (click)="setSize()">Tamaño estandar 1</button>
-  <button class="b2" (click)="setSize()">Tamaño estandar 2</button>
-  <button class="b3" (click)="setSize()">Tamaño personalizado</button>
+<div *ngIf="!importedJson">
+  <button class="b1" (click)="initCanvas(600, 900)">Tamaño estandar 1</button>
+  <button class="b2" (click)="initCanvas(600, 600)">Tamaño estandar 2</button>
+  <button class="b3" (click)="initCanvas(900, 900)">Tamaño personalizado</button>
 </div>
 -->
 <div class="editor-container">
@@ -14,7 +14,7 @@
     <button (click)="loadImage('dragon.jpg')">Añadir imagen</button>
     <button (click)="deleteActiveObject()">Eliminar elemento</button>
     <button (click)="clearCanvas()">Limpiar</button>
-    <ng-container *ngIf="importedJson">
+    <ng-container *ngIf="user">
       <button (click)="exportCanvasAsJson(true)">Guardar plantilla</button>
       <div *ngIf="templateToSave" class="mt-3">
         <label for="templateName">Nombre de la plantilla:</label>
