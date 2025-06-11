@@ -5,6 +5,8 @@ import { RouterModule } from '@angular/router';
 import { ProfileComponent } from './profile/profile.component';
 import { VisualsRoutingModule } from './visuals-routing.module';
 import { InstructionsComponent } from './instructions/instructions.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 
 
 
@@ -16,6 +18,8 @@ import { InstructionsComponent } from './instructions/instructions.component';
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     VisualsRoutingModule
   ],

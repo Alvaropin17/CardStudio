@@ -189,6 +189,22 @@ export class EditorComponent implements AfterViewInit {
     this.registerCanvasObject(id, this.objectName, circle.type, circle);
   }
 
+  addLine() {
+    const line = new fabric.Line([50, 100, 200, 200], {
+      stroke: this.selectedColor,
+      strokeWidth: 2
+    });
+
+    const id = uuidv4();
+    line.name = this.objectName;
+    line.id = id;
+
+    this.canvas.add(line);
+    this.canvas.setActiveObject(line);
+
+    this.registerCanvasObject(id, this.objectName, line.type, line);
+  }
+
   async loadImage(imagePath: string): Promise<void> {
     try {
       const img = await fabric.FabricImage.fromURL(`images/${imagePath}`);

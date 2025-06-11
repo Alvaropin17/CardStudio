@@ -12,10 +12,10 @@ export class AuthService {
 
   private baseUrl = 'http://localhost:3000/api/auth';
 
-  private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasUser());
-  public isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();
-
   constructor(private http: HttpClient) { }
+
+  private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasUser());
+  public isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();  
 
   private hasUser(): boolean {
     return !!localStorage.getItem('user');

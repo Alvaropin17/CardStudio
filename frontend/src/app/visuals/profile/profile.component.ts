@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from '../../services/user-service.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 
 @Component({
   selector: 'app-profile',
@@ -9,9 +12,23 @@ import { Router } from '@angular/router';
 })
 export class ProfileComponent implements OnInit {
   user: any;
+  modifyForm: FormGroup;
+  successMessage = '';
+  errorMessage = '';
 
+  isOpen = false;
 
-  constructor(private router:Router) { }
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private fb: FormBuilder
+  ) {
+    this.modifyForm = this.fb.group({
+      name: [''],
+      password: ['', Validators.minLength(8)],
+      email: ['', [Validators.email]],
+    });
+  }
 
   ngOnInit(): void {
     const userData = localStorage.getItem('user');
@@ -20,5 +37,30 @@ export class ProfileComponent implements OnInit {
       return;
     }
     this.user = JSON.parse(userData);
+  }
+
+  updateProfile(): void {
+    const updatedData = {
+      id: this.user.id,
+      ...this.modifyForm.value
+    };
+
+    this.userService.updateUser(this.user.id, updatedData).subscribe({
+      next: (response) => {
+        this.successMessage = 'Perfil actualizado correctamente';
+        this.errorMessage = '';
+        localStorage.setItem('user', JSON.stringify(response.body));
+        this.user = response.body;
+        this.modifyForm.reset();
+      },
+      error: (error) => {
+        this.errorMessage = error.message || 'Error al actualizar el perfil';
+        this.successMessage = '';
+      }
+    });
+  }
+
+  toggleAccordion() {
+    this.isOpen = !this.isOpen;
   }
 }
