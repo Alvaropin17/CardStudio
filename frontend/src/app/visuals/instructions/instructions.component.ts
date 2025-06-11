@@ -8,4 +8,14 @@ import { Component } from '@angular/core';
 })
 export class InstructionsComponent {
 
+accordionStates: boolean[] = [false, false, false, false, false]; // Un elemento por cada acordeón
+
+isAccordionOpen(index: number): boolean {
+  return this.accordionStates[index];
+}
+
+toggleAccordion(index: number) {
+  this.accordionStates[index] = !this.accordionStates[index];
+}
+
 }

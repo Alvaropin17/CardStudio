@@ -4,13 +4,13 @@
   </div>
   <div class="nav-links">
       <a routerLink="/visuals/instructions" routerLinkActive="active">Instrucciones</a>
+      <a routerLink="/cards/editor" routerLinkActive="active">Editor</a>
     <ng-container *ngIf="isLogged">
-      <a routerLink="/cards/manager" routerLinkActive="active">Gestor de Barajas</a>
+      <a routerLink="/cards/manager" routerLinkActive="active">Gestor de Cartas</a>
       <a routerLink="/visuals/profile" routerLinkActive="active">Perfil</a>
       <a routerLink="/logout" routerLinkActive="active">Logout</a>
     </ng-container>
     <ng-container *ngIf="!isLogged">
-      <a routerLink="/cards/editor" routerLinkActive="active">Editor</a>
       <a routerLink="/auth/login" routerLinkActive="active">Login</a>
       <a routerLink="/auth/register" routerLinkActive="active">Registro</a>
     </ng-container>

@@ -1,36 +1,150 @@
-
-<!--TODO: terminar-->
 <div class="container">
   <h2>📘 Instrucciones de uso</h2>
-  <p>Bienvenido CardStudio. En esta guía aprenderás cómo puedes materializar de manera fácil y sencilla tu TCG de ensueño.</p>
-  <p>Desde la sección <strong>Gestor de mazo</strong> podrás gestionar tus plantillas y datos de cartas</p>
+  <p>Bienvenido a CardStudio. En esta guía aprenderás cómo puedes materializar de manera fácil y sencilla tu TCG de
+    ensueño.</p>
 
-  <div class="row">
-    <h4>🧩 1. Crear una plantilla</h4>
-    <p>Esta aplicación te permite crear plantillas que sirven de base para generar las cartas.</p>
+  <div class="accordion">
+    <div class="accordion-header" (click)="toggleAccordion(0)">
+      <h4>🧩 1. Qué es una plantilla</h4>
+      <span class="accordion-icon">{{isAccordionOpen(0) ? '−' : '+'}}</span>
+    </div>
+    <div class="accordion-content" [class.open]="isAccordionOpen(0)">
+      <p>Las plantillas son los diseños base que determinan <strong>cómo se verán todas tus cartas</strong>. Controlan
+        la disposición de imágenes, texto y elementos gráficos.</p>
+      <h4>🛠️ ¿Cómo crear una plantilla?</h4>
+      <p>Esta aplicación te permite crear plantillas usando la pestaña <strong>Editor</strong>. Puedes ir a esta pestaña
+        desde la barra de navegación o clicando en <strong>Añadir Platilla</strong> en el Gestor de Cartas.</p>
+      <p>Aquí podrás modificar tu plantilla a tu gusto. Añade elementos y modifícalos como quieras.</p>
+      <p><strong>Guarda tu plantilla</strong> cuando hayas terminado:</p>
+      <ul>
+        <li>Para <strong>nuevas</strong> plantillas: Introduce un nombre descriptivo</li>
+        <li>Para <strong>modificaciones</strong>: Elige si mantener el nombre actual o cambiarlo</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="row">
-    <h4>📄 2. Subir un CSV</h4>
-    <p>Desde la sección <strong>CSV Datasets</strong>, añade un archivo CSV que contenga los datos de tus cartas.</p>
+  <div class="accordion">
+    <div class="accordion-header" (click)="toggleAccordion(1)">
+      <h4>📄 2. Qué es un CSV</h4>
+      <span class="accordion-icon">{{isAccordionOpen(1) ? '−' : '+'}}</span>
+    </div>
+    <div class="accordion-content" [class.open]="isAccordionOpen(1)">
+      <p>Un CSV (por sus siglas en inglés <em>Comma Separated Values</em>) es un archivo de texto simple que organiza
+        datos en forma de tabla, donde cada línea representa una fila y los valores están separados por comas. Es una
+        manera de exportación de hojas de cálculo</p>
+
+      <h4>¿Por qué necesito un CSV?</h4>
+      <p>El archivo CSV se usa para generar tus cartas. En este archivo podrás escribir todos los datos relevantes como
+        nombres, estadísticas, descripciones... de manera estructurada.</p>
+
+      <h4>¿Cómo preparar mi CSV?</h4>
+      <p>Puedes crear tu archivo CSV usando programas como Excel, Google Sheets o cualquier editor de texto:</p>
+      <ul>
+        <li>La primera fila debe contener los <strong>encabezados</strong> (ej:
+          <code>nombre</code>, <code>poder</code>, <code>descripcion</code>)
+        </li>
+        <li>Cada fila siguiente representa una <strong>carta diferente</strong></li>
+        <li>Guarda el archivo con <strong>formato CSV</strong> (UTF-8 recomendado)</li>
+      </ul>
+
+      <h4>¿Cómo subir mi CSV?</h4>
+      <p>Desde la sección <strong>Gestor de Cartas</strong> en la barra de navegación:</p>
+      <ol>
+        <li>Haz clic en <strong>"Añadir un nuevo CSV"</strong></li>
+        <li>Selecciona tu archivo desde tu computadora</li>
+        <li>Confirma la operación</li>
+      </ol>
+      <p>Una vez subido, podrás ver una previsualización de tus datos y asignarles un nombre.</p>
+
+      <h4>Consejos importantes</h4>
+      <ul class="list-group">
+        <li class="list-group-item">✅ Usa <strong>nombres consistentes</strong> para los encabezados (los usarás al
+          diseñar la plantilla)</li>
+        <li class="list-group-item">📏 Mantén la <strong>misma estructura</strong> en todas las filas.</li>
+        <li class="list-group-item">🗂️ Puedes subir <strong>múltiples CSVs</strong> para diferentes tipos de cartas.
+        </li>
+        <li class="list-group-item">📂 Usa nombres significativos al guardar tu CSV para reconocerlo facilmente.</li>
+        <li class="list-group-item">🔄 Puedes actualizar tu CSV en cualquier momento.</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="row">
-    <h4>🔗 3. Asignar CSV a Plantilla</h4>
-    <p>Selecciona una plantilla y haz clic en "Asignar CSV". Esto vincula los datos con el diseño visual.</p>
+  <div class="accordion">
+    <div class="accordion-header" (click)="toggleAccordion(2)">
+      <h4>🔗 3. Asignar CSV a Plantilla</h4>
+      <span class="accordion-icon">{{isAccordionOpen(2) ? '−' : '+'}}</span>
+    </div>
+    <div class="accordion-content" [class.open]="isAccordionOpen(2)">
+      <p>En el <strong>Gestor de Cartas</strong> encontrarás dos secciones importantes:</p>
+      <ul>
+        <li><strong>Plantillas</strong>: Tus diseños de cartas creados</li>
+        <li><strong>Archivos CSV</strong>: Los conjuntos de datos que subiste</li>
+      </ul>
+
+      <h4>Cómo asignar un CSV a tu plantilla</h4>
+      <ol>
+        <li>Selecciona una <strong>plantilla</strong> de tu lista</li>
+        <li>Elige el <strong>archivo CSV</strong> que contiene tus datos</li>
+        <li>Haz clic en el botón <code>"Asignar CSV"</code> que aparece junto a la plantilla</li>
+      </ol>
+
+      <div class="info-box">
+        <h4>¿Qué logras al asignar un CSV?</h4>
+        <p>Al vincularlos:</p>
+        <ul class="list-group">
+          <li class="list-group-item">📌 Los <strong>datos del CSV</strong> automáticamente rellenarán los campos de la
+            plantilla</li>
+          <li class="list-group-item">🖼️ Cada fila del CSV generará una <strong>carta única</strong> con el mismo
+            diseño</li>
+        </ul>
+      </div>
+      <p></p>
+      <p><strong>Nota</strong>: Puedes asignar el mismo CSV a diferentes plantillas para crear variantes de tus
+        cartas!</p>
+    </div>
   </div>
 
-  <div class="row">
-    <h4>🖨️ 4. Generar Mazos</h4>
-    <p>Una vez asignado, puedes hacer clic en "Generar" para crear las cartas.</p>
-  </div>
+  <div class="accordion">
+    <div class="accordion-header" (click)="toggleAccordion(3)">
+      <h4>🖨️ 4. Generar Mazos de Cartas</h4>
+      <span class="accordion-icon">{{isAccordionOpen(3) ? '−' : '+'}}</span>
+    </div>
+    <div class="accordion-content" [class.open]="isAccordionOpen(3)">
+      <p>🎉 ¡Es hora de dar vida a tus cartas! Sigue estos pasos:</p>
 
-  <div class="row">
-    <h4>📝 Consejos</h4>
-    <ul class="list-group">
-      <li class="list-group-item">✅ Usa un CSV con encabezados claros (ej. <code>nombre</code>, <code>poder</code>, etc.)</li>
-      <li class="list-group-item">💾 Guarda tus plantillas regularmente</li>
-      <li class="list-group-item">🔁 Puedes volver y editar todo en cualquier momento</li>
-    </ul>
+      <h4>📌 Pasos para generar tus cartas</h4>
+      <ol>
+        <li class="list-group-item"><strong>Selecciona</strong> la plantilla con CSV asignado en el Gestor de Cartas
+        </li>
+        <li class="list-group-item">Haz clic en el botón <code>"Generar Mazo"</code></li>
+        <li class="list-group-item">Sube una carpeta con las imágenes que quieras para tus cartas</li>
+        <li class="list-group-item">Elige si quieres un zip con todas las imágenes en formato PNG o un PDF con las imagenes listas para imprimir</li>
+      </ol>
+
+      <h4>🔍 Qué ocurre al generar</h4>
+      <ul>
+        <li class="list-group-item">Cada fila de tu CSV se convierte en una <strong>carta única</strong>.</li>
+        <li class="list-group-item">Las imágenes de la carpeta y textos del CSV se asignan a las cartas si el nombre de los campos coinciden con la cabecera del CSV.</li>
+        <li class="list-group-item">Se genera el ZIP o el PDF.</li>
+
+      </ul>
+
+      <div class="pro-tip">
+        <h4>💡 Consejos profesionales</h4>
+        <ul class="list-group">
+          <li class="list-group-item">✅ <strong>Revisa</strong> siempre una carta de prueba antes de generar el mazo
+            completo</li>
+          <li class="list-group-item">📏 Verifica que todo el texto se muestra correctamente en los campos designados
+          </li>
+          <li class="list-group-item">🔄 Puedes regenerar el mazo cuantas veces necesites si actualizas tu CSV o
+            plantilla</li>
+        </ul>
+      </div>
+
+      <p></p>
+      <p><strong>Recordatorio:</strong> en el caso de que una cabecera del CSV y el nombre de un elemento de imagen coincidan, la aplicación 
+      buscará en la carpeta que subiste una imagen con el nombre que pusiste en el campo del CSV. Es por eso que es muy importante que las imágenes que subes y 
+      los campos del CSV tengan el mismo nombre. <strong>NO NECESITAS INCLUIR LA EXTENSIÓN!!</strong></p>
+    </div>
   </div>
 </div>
