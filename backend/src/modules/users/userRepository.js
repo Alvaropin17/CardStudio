@@ -1,6 +1,6 @@
-const db = require('./connections/sqlDb');
+const db = require('../../database/connections/sqlDb');
 const bcrypt = require('bcryptjs');
-const User = require('./models/user');
+const User = require('../../database/models/user');
 
 //---------------------------------------------API---------------------------------------------//
 

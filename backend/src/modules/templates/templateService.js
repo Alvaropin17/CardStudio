@@ -1,4 +1,4 @@
-const templateRepository = require('../../database/templateRepository');
+const templateRepository = require('./templateRepository');
 const Template = require('../../database/models/template');
 
 async function getAllTemplatesByUser(userId) {

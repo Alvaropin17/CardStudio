@@ -1,4 +1,4 @@
-const userRepository = require('../../database/userRepository');
+const userRepository = require('./userRepository');
 const User = require('../../database/models/user');
 
 

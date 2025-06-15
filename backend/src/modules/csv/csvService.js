@@ -1,4 +1,4 @@
-const csvDatasetRepository = require('../../database/csvRepository');
+const csvDatasetRepository = require('./csvRepository');
 const CsvDataSet = require('../../database/models/csvDataSet');
 
 async function getAllDatasetsByUser(userId) {

@@ -1,5 +1,5 @@
-const { getGridFS } = require('./connections/mongoDb');
-const Deck = require('./models/deck');
+const { getGridFS } = require('../../database/connections/mongoDb');
+const Deck = require('../../database/models/deck');
 const mongoose = require('mongoose');
 const { Readable } = require('stream');
 

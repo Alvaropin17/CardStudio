@@ -1,5 +1,5 @@
-const db = require('./connections/sqlDb');
-const Template = require('./models/template');
+const db = require('../../database/connections/sqlDb');
+const Template = require('../../database/models/template');
 
 async function getAllByUser(userId) {
     return new Promise((resolve, reject) => {

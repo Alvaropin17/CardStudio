@@ -1,4 +1,4 @@
-const deckRepository = require('../../database/DeckRepository');
+const deckRepository = require('./DeckRepository');
 
 async function getAllDecksByUser(userId) {
     return await deckRepository.getAllByUser(userId);
