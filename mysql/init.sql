@@ -1,8 +1,6 @@
--- Crear base de datos (ajusta el nombre si quieres)
 CREATE DATABASE IF NOT EXISTS appdatabase;
 USE appdatabase;
 
--- Tabla: users
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(100) NOT NULL,
@@ -10,7 +8,6 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(100) NOT NULL
 );
 
--- Tabla: csv_datasets
 CREATE TABLE IF NOT EXISTS csv_datasets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -21,7 +18,6 @@ CREATE TABLE IF NOT EXISTS csv_datasets (
         ON DELETE CASCADE
 );
 
--- Tabla: templates
 CREATE TABLE IF NOT EXISTS templates (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -34,6 +30,7 @@ CREATE TABLE IF NOT EXISTS templates (
     FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
 );
+
 
 GRANT ALL PRIVILEGES ON appdatabase.* TO 'appuser'@'%';
 FLUSH PRIVILEGES;

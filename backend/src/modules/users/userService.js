@@ -16,6 +16,7 @@ function createUser(body) {
 }
 
 function updateUser(id, body) {
+    console.log(body);
     const updatedUser = new User(id, body.name, body.password, body.email);
     return userRepository.updateUser(updatedUser);
 }

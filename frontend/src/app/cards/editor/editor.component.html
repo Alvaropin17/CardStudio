@@ -50,11 +50,7 @@
         </label>
       </div>
       <!-- Text -->
-      <div *ngIf="isTextObject()" class="form-group">
-        <label>Texto:</label>
-        <input type="text" [ngModel]="getTextProperty('text')" (ngModelChange)="setTextProperty('text', $event)"
-          class="form-control" />
-      </div>
+
 
       <!-- Color -->
       <div class="form-group">
@@ -63,8 +59,11 @@
           class="form-control" />
       </div>
 
-      <!--Font-->
+      <!-- Text -->
       <div *ngIf="isTextObject()" class="form-group">
+        <label>Texto:</label>
+        <input type="text" [ngModel]="getTextProperty('text')" (ngModelChange)="setTextProperty('text', $event)"
+          class="form-control" />
         <label>
           Fuente:
           <select style="width: 4rem; ">
@@ -77,13 +76,15 @@
           </select>
 
         </label>
-      </div>
-
-      <!-- Font size -->
-      <div *ngIf="isTextObject()" class="form-group">
         <label>Tamaño de fuente:</label>
         <input type="number" [value]="getTextProperty('fontSize')"
           (input)="setTextProperty('fontSize', $any($event.target).value)" min="8" max="120" class="form-control" />
+        <label>Estilos:</label>
+        <div class="style-buttons">
+          <button (click)="toggleTextStyle('bold')">Negrita</button>
+          <button (click)="toggleTextStyle('italic')">Cursiva</button>
+          <button (click)="toggleTextStyle('underline')">Subrayado</button>
+        </div>
       </div>
 
       <!-- Position -->
@@ -117,12 +118,18 @@
       </div>
     </div>
   </div>
+
+
   <div class="position-control toolbar">
     <h2>Gestión del lienzo</h2>
-    <div>
-      <label>Color de fondo:</label>
-      <input type="color" (change)="changeCanvasBackgroundColor($event)">
+
+    <div class="form-group">
+      <label for="bgColor">Color de fondo:</label>
+      <input id="bgColor" type="color" (change)="changeCanvasBackgroundColor($event)">
     </div>
+
+
+
     <h3>Objetos del lienzo</h3>
     <div class="arrow-buttons">
       <button (click)="bringToFront()" title="Traer al frente">⏫</button>
@@ -130,12 +137,12 @@
       <button (click)="moveDown()" title="Bajar una capa">🔽</button>
       <button (click)="sendToBack()" title="Enviar al fondo">⏬</button>
     </div>
+
     <ul class="object-list">
       <li class="list-element" *ngFor="let object of canvasObjectsList" (click)="selectObjectFromList(object)">
         <strong>{{ object.name }}</strong> ({{ object.type }})<br />
       </li>
     </ul>
-
   </div>
 
 </div>

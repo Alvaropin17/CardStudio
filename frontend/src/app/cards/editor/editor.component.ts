@@ -563,6 +563,27 @@ export class EditorComponent implements AfterViewInit {
     this.canvas.requestRenderAll();
   }
 
+  toggleTextStyle(style: 'bold' | 'italic' | 'underline'): void {
+    if (!this.activeObject || this.activeObject.type !== 'textbox') return;
+
+    switch (style) {
+      case 'bold':
+        const isBold = this.activeObject.get('fontWeight') === 'bold';
+        this.activeObject.set('fontWeight', isBold ? 'normal' : 'bold');
+        break;
+      case 'italic':
+        const isItalic = this.activeObject.get('fontStyle') === 'italic';
+        this.activeObject.set('fontStyle', isItalic ? 'normal' : 'italic');
+        break;
+      case 'underline':
+        const isUnderlined = this.activeObject.get('underline') === true;
+        this.activeObject.set('underline', !isUnderlined);
+        break;
+    }
+
+    this.canvas.renderAll();
+  }
+
   updateProperty(property: string, value: any): void {
     if (!this.activeObject) return;
 

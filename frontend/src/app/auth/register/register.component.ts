@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ export class RegisterComponent {
   registerForm: FormGroup;
   message: string = '';
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.registerForm = this.fb.group({
       name: [''],
       email: [''],
@@ -25,8 +26,8 @@ export class RegisterComponent {
 
     this.authService.register(name, password, email).subscribe({
       next: () => {
-        this.message = 'Registro exitoso 🎉';
-        this.registerForm.reset();
+        this.router.navigate(['/auth/login']);
+
       },
       error: (err: Error) => {
         this.message = err.message;

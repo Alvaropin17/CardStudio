@@ -40,9 +40,20 @@ export class ProfileComponent implements OnInit {
   }
 
   updateProfile(): void {
+
+    const rawValues = this.modifyForm.value;
+
+    const filteredValues = Object.keys(rawValues).reduce((acc: any, key) => {
+      const value = rawValues[key];
+      if (value !== null && value !== undefined && value !== '') {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
+
     const updatedData = {
       id: this.user.id,
-      ...this.modifyForm.value
+      ...filteredValues
     };
 
     this.userService.updateUser(this.user.id, updatedData).subscribe({

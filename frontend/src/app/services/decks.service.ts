@@ -10,7 +10,7 @@ import { UniqueCardImageResponse } from '../models/responses/unique-deck-respons
 })
 export class DecksService {
 
-    private baseUrl = 'http://localhost:3000/api/users';
+    private baseUrl = 'https://localhost:8443/api/users';
 
     constructor(private http: HttpClient) { }
 

@@ -1,3 +1,4 @@
+/*
 const mongoose = require("mongoose");
 const { GridFSBucket } = require("mongodb");
 
@@ -29,4 +30,5 @@ function getGridFS() {
 module.exports = {
     getGridFS
 };
+*/
 

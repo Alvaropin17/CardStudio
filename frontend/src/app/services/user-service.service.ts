@@ -10,7 +10,7 @@ import { UserResponse } from '../models/responses/user-response';
 })
 export class UserService {
 
-  private baseUrl = 'http://localhost:3000/api/users';
+  private baseUrl = 'https://localhost:8443/api/users';
 
   constructor(private http: HttpClient) {}
 

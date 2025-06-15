@@ -10,7 +10,7 @@ import { User } from '../../models/user';
 })
 export class AuthService {
 
-  private baseUrl = 'http://localhost:3000/api/auth';
+  private baseUrl = 'https://localhost:8443/api/auth';
 
   constructor(private http: HttpClient) { }
 
