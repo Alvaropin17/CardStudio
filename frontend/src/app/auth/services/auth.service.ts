@@ -15,7 +15,7 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasUser());
-  public isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();  
+  public isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();
 
   private hasUser(): boolean {
     return !!localStorage.getItem('user');
@@ -27,7 +27,7 @@ export class AuthService {
     }).pipe(
       tap((response) => {
         localStorage.setItem('user', JSON.stringify(response.body));
-        this.isLoggedInSubject.next(true); 
+        this.isLoggedInSubject.next(true);
 
       }),
       catchError(this.handleError)
@@ -49,6 +49,8 @@ export class AuthService {
   register(user: string, password: string, email: string): Observable<any> {
     return this.http.post<RegisterResponse>(`${this.baseUrl}/register`, {
       user, password, email
+    }, {
+      withCredentials: true
     }).pipe(
       catchError(this.handleError)
     );

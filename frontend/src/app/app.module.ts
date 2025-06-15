@@ -7,8 +7,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
 import { CardsModule } from './cards/cards.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
 import { VisualsModule } from './visuals/visuals.module';
+import { CsrfInterceptor } from './interceptors/csrf.interceptor';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,9 @@ import { VisualsModule } from './visuals/visuals.module';
     CardsModule, 
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+     { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

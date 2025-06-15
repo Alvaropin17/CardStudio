@@ -1,12 +1,13 @@
 const express = require('express');
-const cors = require('cors');
 const cookieParser = require('cookie-parser');
+
 const fs = require('fs');
 const https = require('https');
 const path = require('path');
 
 const config = require('./config')
 
+const { csrfTokenMiddleware } = require('./middlewares/csrf');
 const userController = require('./modules/users/userController')
 const loginController = require('./modules/auth/authController')
 
@@ -19,14 +20,11 @@ const httpsOptions = {
   cert: fs.readFileSync(path.join(__dirname, '../cert.pem')),
 };
 
-app.use(cors({
-    origin: 'https://localhost:8443',  
-    credentials: true            
-  }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 app.use(cookieParser());
-
+app.use(csrfTokenMiddleware); 
 
 
 app.set('port', config.app.port);
