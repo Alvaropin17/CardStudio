@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import * as Papa from 'papaparse';
-import { CsvDataset } from '../../models/csv-dataset';
-import { CsvDatasetsService } from '../../services/csv-datasets.service';
+import { CsvDataset } from '../../../models/csv-dataset';
+import { CsvDatasetsService } from '../../../services/csv-datasets.service';
 
 
 

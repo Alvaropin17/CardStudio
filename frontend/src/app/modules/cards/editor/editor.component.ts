@@ -2,8 +2,8 @@ import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CanvasObject } from '../models/canvas-object';
 import { v4 as uuidv4 } from 'uuid';
-import { TemplatesService } from '../../services/templates.service';
-import { Template } from '../../models/template';
+import { TemplatesService } from '../../../services/templates.service';
+import { Template } from '../../../models/template';
 
 import * as fabric from 'fabric';
 

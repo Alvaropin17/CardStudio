@@ -5,10 +5,10 @@ import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthModule } from './auth/auth.module';
-import { CardsModule } from './cards/cards.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { CardsModule } from './modules/cards/cards.module';
 import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
-import { VisualsModule } from './visuals/visuals.module';
+import { VisualsModule } from './modules/visuals/visuals.module';
 import { CsrfInterceptor } from './interceptors/csrf.interceptor';
 
 @NgModule({

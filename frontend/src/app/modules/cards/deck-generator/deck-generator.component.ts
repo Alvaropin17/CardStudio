@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TemplatesService } from '../../services/templates.service';
-import { CsvDatasetsService } from '../../services/csv-datasets.service';
-import { DecksService } from '../../services/decks.service';
+import { TemplatesService } from '../../../services/templates.service';
+import { CsvDatasetsService } from '../../../services/csv-datasets.service';
+import { DecksService } from '../../../services/decks.service';
 
-import { CsvDataset } from '../../models/csv-dataset';
-import { Template } from '../../models/template';
-import { Deck } from '../../models/deck';
+import { CsvDataset } from '../../../models/csv-dataset';
+import { Template } from '../../../models/template';
+import { Deck } from '../../../models/deck';
 
 import { jsPDF } from 'jspdf';
 

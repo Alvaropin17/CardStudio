@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { TemplatesService } from '../../services/templates.service';
-import { CsvDatasetsService } from '../../services/csv-datasets.service';
+import { TemplatesService } from '../../../services/templates.service';
+import { CsvDatasetsService } from '../../../services/csv-datasets.service';
 import { Router } from '@angular/router';
 
 @Component({
