@@ -56,18 +56,12 @@ async function createUser(newUser) {
     });
 }
 
-async function updateUser(updatedUser) {
+async function updateUserName(updatedUser) {
     return new Promise(async (resolve, reject) => {
         try {
-            let updatedPassword = updatedUser.password;
-
-            if (updatedUser.password) {
-                updatedPassword = await bcrypt.hash(updatedUser.password, 10);
-            }
-
             db.query(
-                `UPDATE users SET name = ?, password = ?, email = ? WHERE id = ?`,
-                [updatedUser.name, updatedPassword, updatedUser.email, updatedUser.id], 
+                `UPDATE users SET name = ? WHERE id = ?`,
+                [updatedUser.name, updatedUser.id], 
                 (err, results) => {
                     if (err) {
                         return reject(err);
@@ -81,6 +75,58 @@ async function updateUser(updatedUser) {
                 }
             );
         } catch (error) {
+            console.error('Error in updateUser:', error);
+            reject({ error: true, message: 'Error en el proceso de actualización', details: error });
+        }
+    });
+}
+
+async function updateUserEmail(updatedUser) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            db.query(
+                `UPDATE users SET email = ? WHERE id = ?`,
+                [updatedUser.email, updatedUser.id], 
+                (err, results) => {
+                    if (err) {
+                        return reject(err);
+                    }
+
+                    if (results.affectedRows === 0) {
+                        return resolve(null);
+                    }
+
+                    resolve(updatedUser);
+                }
+            );
+        } catch (error) {
+            console.error('Error in updateUser:', error);
+            reject({ error: true, message: 'Error en el proceso de actualización', details: error });
+        }
+    });
+}
+
+async function updateUserPassword(updatedUser) {
+    updatedUser.password = await bcrypt.hash(updatedUser.password, 10);
+    return new Promise(async (resolve, reject) => {
+        try {
+            db.query(
+                `UPDATE users SET password = ? WHERE id = ?`,
+                [updatedUser.password, updatedUser.id], 
+                (err, results) => {
+                    if (err) {
+                        return reject(err);
+                    }
+
+                    if (results.affectedRows === 0) {
+                        return resolve(null);
+                    }
+
+                    resolve(updatedUser);
+                }
+            );
+        } catch (error) {
+            console.error('Error in updateUser:', error);
             reject({ error: true, message: 'Error en el proceso de actualización', details: error });
         }
     });
@@ -131,7 +177,9 @@ module.exports = {
     getAll,
     getOne,
     createUser,
-    updateUser,
+    updateUserName,
+    updateUserEmail,
+    updateUserPassword,
     deleteUser,
     getByName
 };

@@ -61,29 +61,37 @@
 
       <!-- Text -->
       <div *ngIf="isTextObject()" class="form-group">
-        <label>Texto:</label>
-        <input type="text" [ngModel]="getTextProperty('text')" (ngModelChange)="setTextProperty('text', $event)"
-          class="form-control" />
-        <label>
-          Fuente:
-          <select style="width: 4rem; ">
-            <option value="Arial">Arial</option>
-            <option value="Times New Roman">Times New Roman</option>
-            <option value="Courier New">Courier New</option>
-            <option value="Georgia">Georgia</option>
-            <option value="Comic Sans MS">Comic Sans MS</option>
-            <option value="Impact">Impact</option>
-          </select>
+        <div>
+          <label>Texto:</label>
+          <input type="text" [ngModel]="getTextProperty('text')" (ngModelChange)="setTextProperty('text', $event)"
+            class="form-control" />
+        </div>
+        <div>
+          <label>
+            Fuente:
+            <select style="width: 4rem; ">
+              <option value="Arial">Arial</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Courier New">Courier New</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Comic Sans MS">Comic Sans MS</option>
+              <option value="Impact">Impact</option>
+            </select>
 
-        </label>
-        <label>Tamaño de fuente:</label>
-        <input type="number" [value]="getTextProperty('fontSize')"
-          (input)="setTextProperty('fontSize', $any($event.target).value)" min="8" max="120" class="form-control" />
-        <label>Estilos:</label>
-        <div class="style-buttons">
-          <button (click)="toggleTextStyle('bold')">Negrita</button>
-          <button (click)="toggleTextStyle('italic')">Cursiva</button>
-          <button (click)="toggleTextStyle('underline')">Subrayado</button>
+          </label>
+        </div>
+        <div>
+          <label>Tamaño de fuente:</label>
+          <input type="number" [value]="getTextProperty('fontSize')"
+            (input)="setTextProperty('fontSize', $any($event.target).value)" min="8" max="120" class="form-control" />
+        </div>
+        <div>
+          <label>Estilos:</label>
+          <div class="text-styles-buttons">
+            <button (click)="toggleTextStyle('bold')">Negrita</button>
+            <button (click)="toggleTextStyle('italic')">Cursiva</button>
+            <button (click)="toggleTextStyle('underline')">Subrayado</button>
+          </div>
         </div>
       </div>
 
@@ -122,9 +130,10 @@
 
   <div class="position-control toolbar">
     <h2>Gestión del lienzo</h2>
-
-    <div class="form-group">
+    <div>
       <label for="bgColor">Color de fondo:</label>
+    </div>
+    <div class="form-group" >
       <input id="bgColor" type="color" (change)="changeCanvasBackgroundColor($event)">
     </div>
 

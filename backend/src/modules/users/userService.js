@@ -15,10 +15,21 @@ function createUser(body) {
     return userRepository.createUser(newUser);
 }
 
-function updateUser(id, body) {
-    console.log(body);
-    const updatedUser = new User(id, body.name, body.password, body.email);
-    return userRepository.updateUser(updatedUser);
+async function updateUser(id, body) {
+    const existingUser =  await userRepository.getOne(id);
+    if(body.password){
+        const updatedUser = new User(id, existingUser.name, body.password,existingUser.email);
+        await userRepository.updateUserPassword(updatedUser);
+    }
+    if (body.name){
+        const updatedUser = new User(id, body.name, existingUser.password, existingUser.email);
+        await userRepository.updateUserName(updatedUser);
+    }
+    if (body.email) {
+        const updatedUser = new User(id, existingUser.name, existingUser.password, body.email);
+        await userRepository.updateUserEmail(updatedUser);
+    }
+    return userRepository.getOne(id);;
 }
 
 function deleteUser(id) {
