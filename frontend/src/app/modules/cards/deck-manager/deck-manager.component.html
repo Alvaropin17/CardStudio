@@ -15,14 +15,15 @@
                         <button class="btn-link btn-link--delete" [routerLink]="['/cards/editor', template.id]">
                             Editar
                         </button>
-                        <button class="btn-link btn-link--delete" [routerLink]="['/cards/generate-deck', template.id]">Generar</button>
+                        <button class="btn-link btn-link--delete"
+                            [routerLink]="['/cards/generate-deck', template.id]">Generar</button>
                         <button class="btn-link btn-link--delete" (click)="deleteTemplate(template.id)">
                             Eliminar
                         </button>
                     </div>
                 </li>
             </ul>
-            <a class="btn btn-success mt3" routerLink="/cards/editor">Añadir nuevo template</a>
+            <a class="btn btn-add" routerLink="/cards/editor">Añadir nueva plantilla</a>
         </div>
         <div class="col-md-6">
             <h4>CSV Datasets</h4>
@@ -41,7 +42,7 @@
                     </div>
                 </li>
             </ul>
-            <a class="btn btn-success mt-3" routerLink="/cards/csv">Añadir un nuevo CSV</a>
+            <a class="btn btn-add" routerLink="/cards/csv">Añadir un nuevo CSV</a>
         </div>
     </div>
 </div>

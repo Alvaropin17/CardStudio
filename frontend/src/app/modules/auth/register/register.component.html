@@ -6,6 +6,7 @@
     <input type="password" formControlName="password" placeholder="Contraseña" />
     
     <button type="submit">Registrarse</button>
+    <button type="button" (click)="onLogin()">Iniciar sesión</button>
   </form>
   
   <p *ngIf="message">{{ message }}</p>

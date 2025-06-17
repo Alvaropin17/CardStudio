@@ -34,4 +34,8 @@ export class RegisterComponent {
       }
     });
   }
+
+  onLogin(): void {
+    this.router.navigate(['/auth/login']);
+  }
 }
